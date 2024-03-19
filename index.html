@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home Page</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      background-image: url('https://source.unsplash.com/1920x1080/?scout'); /* Scouting-themed background image */
+      background-size: cover;
+      background-attachment: fixed; /* Fixed background image */
+      animation: scrollBackground 30s linear infinite; /* Scroll background animation */
+    }
+
+    @keyframes scrollBackground {
+      from {
+        background-position: 0 0; /* Start position of the background */
+      }
+      to {
+        background-position: 100% 0; /* End position of the background */
+      }
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0px auto;
+      padding: 30px;
+      border-radius: 10px;
+      background-color: rgba(255, 255, 255, 0.3); /* Semi-transparent white background */
+      
+      backdrop-filter: blur(10px); /* Apply blur effect */
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); /* Add shadow */
+      text-align: center; /* Center align text and buttons */
+    }
+
+    h1 {
+      font-size: 36px;
+      color: #fff; /* Set heading color to white */
+      margin-bottom: 30px;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 15px 40px;
+      margin: 10px;
+      font-size: 18px;
+      text-decoration: none;
+      color: #fff;
+      background-color: #007bff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>اهلا بيك فى فريق كوكب البرية</h1>
+    <a href="qrpage.html" class="button">qr code scanner</a>
+    <a href="registration.html" class="button">تسجيل شبل او زهرة</a>
+    <a href="attendanceReview.html" class="button">اعرف غيابك</a>
+  </div>
+</body>
+</html>
