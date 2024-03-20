@@ -22,7 +22,7 @@ domReady(function () {
     // console.log(decodeResult); 
 	console.log(JSON.stringify({decodeText}));
 	map1.set(decodeText).val++; 
-	fetch( "/",{
+	fetch( "/qrcodepage",{
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
@@ -58,19 +58,3 @@ domReady(function () {
 
 
 // Make a request to the backend endpoint
-fetch(`/attendanceReview/مينا}`)
-  .then(response => {
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    return response.json();
-  })
-  .then(data => {
-    // Handle the response data
-    console.log('Response from server:', data);
-    // Example: Do something with the data, such as logging or processing it further
-  })
-  .catch(error => {
-    // Handle errors
-    console.error('Error fetching data:', error);
-  });

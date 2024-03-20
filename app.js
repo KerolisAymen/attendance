@@ -44,6 +44,7 @@ app.get('/registration', (req, res) => {
   res.sendFile(path.join(__dirname,"registration.html"))
 });
 
+
 app.post('/registration.html', (req, res) => {
    const username = req.body.username;
    console.log(req.body);
@@ -70,17 +71,17 @@ app.post('/registration.html', (req, res) => {
 
 app.get("/attendanceReview/:name", async (req,res)=>{
   const profileData = await Student.findOne({name:req.params.name});
-
+  console.log(profileData.meetings.length)
   const profileData2 = {
     name: profileData.name,
     grade: profileData.grade,
     meetingsAttended: profileData.meetings.length
   };
 
-  console.log(profileData);
   // profileData.json();
-  JSON.stringify(profileData);
-  res.render('profile', { profileData });
+  JSON.stringify(profileData2);
+  console.log(profileData2);
+  res.render('profile', { profileData2 });
 
 
 })
@@ -88,7 +89,7 @@ app.get("/attendanceReview/:name", async (req,res)=>{
 
 
 
-app.post("/sss", async (req, res) => {
+app.post("/qrcodepage", async (req, res) => {
   // console.log(req.body.decodeText);
   // console.log(req.body.decodeText);
   
@@ -110,6 +111,19 @@ let today = new Date(new Date().setHours(0,0,0,0));
 });
 //Kerolis456:afDaYNP5YvABh69L
 //
+
+
+
+
+
+
+
+
+
+
+
+
+
 mongoose.connect("mongodb+srv://Kerolis456:afDaYNP5YvABh69L@nodejsproject.jyjtxsy.mongodb.net/?retryWrites=true&w=majority&appName=nodejsProject")
   .then(() => {
     console.log("Connected to MongoDB");
