@@ -7,7 +7,8 @@ body {
 	height: 100vh;
 	box-sizing: border-box;
 	text-align: center;
-	background: rgb(128 0 0 / 66%);
+	background-image: url('https://source.unsplash.com/1920x1080/?scout'); /* Scouting-themed background image */
+	/* background: rgb(128 0 0 / 66%); */
 }
 .container {
 	width: 100%;
