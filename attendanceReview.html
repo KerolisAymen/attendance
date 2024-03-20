@@ -64,20 +64,23 @@
 </head>
 <body>
     <div class="container">
-        <input type="text" name="name" placeholder="Enter your name" required id="txtbox">
-        <input type="submit" value="Submit" class="btn" onclick="openLink()">
+        <form id="myForm">
+            <input type="text" id="txtbox" name="name" placeholder="Enter your name" required>
+            <input type="submit" value="Submit" class="btn">
+        </form>
     </div>
     <script>
-        // Function to handle opening the link
-        function openLink() {
-            // Specify the URL of the link
-            let txt = document.getElementById("txtbox").value;
-            var url = "http://localhost:3000/attendanceReview";
-    
-            // Navigate to the specified URL in the same tab
-            window.location.href =  url + "/" + txt;
-        }
+        // Function to handle form submission
+        document.getElementById("myForm").addEventListener("submit", function(event) {
+            // Prevent default form submission
+            event.preventDefault();
+            
+            // Get the value from the textbox
+            var txtValue = document.getElementById("txtbox").value;
+            
+            // Modify the window location dynamically
+            window.location.href = "attendanceReview/" + encodeURIComponent(txtValue);
+        });
     </script>
-    
 </body>
 </html>
