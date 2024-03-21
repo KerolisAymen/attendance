@@ -36,12 +36,9 @@ domReady(function () {
 		return response.json();
 	  })
 	  .then(data => {
-		if (data.success) {
-		  // Show message box
+		
 		  alert(decodeText +" "+ data.message);
-		} else {
-		  console.error('Request was successful, but data indicates failure:', data);
-		}
+		
 	  })
 	  .catch(error => {
 		console.error('There was a problem with the fetch operation:', error);

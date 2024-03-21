@@ -4,6 +4,7 @@ const path = require("path");
 const app = express();
 const bodyParser = require("body-parser");
 const qr = require("qrcode");
+const axios = require("axios");
 
 // Set the view engine to use EJS
 app.set("view engine", "ejs");
@@ -96,26 +97,33 @@ app.post("/qrcodepage", async (req, res) => {
 
   let name = req.body.decodeText;
   const name2 = await Student.findOne({ name: name });
+
+  if (name2!= undefined)
+  {
   console.log(name2);
   console.log(name2.meetings);
 
   let today = new Date(new Date().setHours(0, 0, 0, 0));
-  // let newdate = new Date().setHours(0,0,0,0);
-  if (
-    name2.meetings.length == 0 ||
-    name2.meetings[name2.meetings.length - 1].toString() != today.toString()
-  ) {
+  
+   if (name2.meetings.length == 0 ||name2.meetings[name2.meetings.length - 1].toString() != today.toString()){
     name2.meetings.push(today);
-    name2.save().then(() => {
+    await name2.save().then(() => {
       res.json({ message: "saved successfully", success: true });
       console.log("saved successfully");
     });
+  }else{
+    res.json({ message: "saved before", success: true });
   }
+}
+else res.json({ message: "this qr code is not found", success: false });
 });
-//Kerolis456:afDaYNP5YvABh69L
-//
 
-const axios = require("axios");
+app.get("/dashboard" , async(req,res)=>{
+console.log(await Student.find({},"name"));
+const users = await Student.find({} ,"name") ; 
+res.render('dashboard', { users });
+});
+
 
 mongoose
   .connect(
