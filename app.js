@@ -36,9 +36,9 @@ app.get("/registration", (req, res) => {
   res.sendFile(path.join(__dirname, "registration.html"));
 });
 
-app.post("/registration.html", (req, res) => {
+app.post("/registration.html", async(req, res) => {
   const username = req.body.username;
-  console.log(req.body);
+  // console.log(req.body);
 
   const grade = req.body.grade;
 
@@ -47,21 +47,27 @@ app.post("/registration.html", (req, res) => {
     grade: grade,
   });
 
+  if(await Student.findOne({name :req.body.username})!=undefined)
+  {
+    console.log(await Student.findOne({name:req.body.username}));
+    res.send("<h1>تم التسجيل من قبل</h1>");
+  }else{
   newStudent
     .save()
     .then((s) => {
       console.log(s);
-      res.send("Registration successful!");
+      res.send("<h1>تم التسجيل بنجاح</h1>");
     })
     .catch((error) => {
       console.log(error);
     });
+  }
 });
 
 app.get("/attendanceReview/:name", async (req, res) => {
   const profileData = await Student.findOne({ name: req.params.name });
   // console.log(profileData.meetings.length)
-
+  if(profileData != undefined){
   let qrsrc;
   const apiUrl = "https://api.qrserver.com/v1/create-qr-code/";
   const params = {
@@ -89,8 +95,13 @@ app.get("/attendanceReview/:name", async (req, res) => {
   JSON.stringify(profileData2);
   console.log(profileData2);
   res.render("profile", { profileData2 });
+}
+else{
+  res.send("<h1>this user not found</h1>")
+}
 });
 
+// if ("كرستين جمال كامل"=="كرستين جمال كامل")console.log("yes = ")
 app.post("/qrcodepage", async (req, res) => {
   // console.log(req.body.decodeText);
   // console.log(req.body.decodeText);
