@@ -5,6 +5,8 @@ const app = express();
 const bodyParser = require("body-parser");
 const qr = require("qrcode");
 const axios = require("axios");
+const multer  = require('multer')
+const upload = multer({ dest: 'uploads/' })
 
 // Set the view engine to use EJS
 app.set("view engine", "ejs");
@@ -19,6 +21,7 @@ app.use(express.json());
 const studentSchema = new mongoose.Schema({
   name: String,
   grade: Number,
+  profilepic : String,
   meetings: Array,
 });
 
@@ -36,7 +39,11 @@ app.get("/registration", (req, res) => {
   res.sendFile(path.join(__dirname, "registration.html"));
 });
 
-app.post("/registration.html", async(req, res) => {
+app.post("/registration.html", upload.single('avatar'), async(req, res ,next) => {
+
+
+
+
   const username = req.body.username;
   // console.log(req.body);
 
@@ -44,6 +51,7 @@ app.post("/registration.html", async(req, res) => {
 
   let newStudent = new Student({
     name: username,
+    profilepic: req.file.path,
     grade: grade,
   });
 
@@ -89,6 +97,7 @@ app.get("/attendanceReview/:name", async (req, res) => {
     name: profileData.name,
     grade: profileData.grade,
     meetingsAttended: profileData.meetings.length,
+    profilepic : profileData.profilepic,
     imgUrl: qrsrc,
   };
 
@@ -131,9 +140,16 @@ else res.json({ message: "this qr code is not found", success: false });
 
 app.get("/dashboard" , async(req,res)=>{
 console.log(await Student.find({},"name"));
-const users = await Student.find({} ,"name") ; 
+const users = await Student.find({}) ; 
 res.render('dashboard', { users });
 });
+
+
+
+
+
+
+
 
 
 mongoose

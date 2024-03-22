@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=0"/>
   <title>User List</title>
   <style>
     .grid-container {
@@ -38,10 +38,9 @@
   <div class="grid-container">
     <% users.forEach(user => { %>
       <div class="user-card">
-        <div class="profilepic">
-
-        </div>
-        <p><%= user.name %></p>
+        
+          <img src="<%=user.profilepic %>" alt="profilepic" class="profilepic">
+        <p style="margin: 0px;"><%= user.name %></p>
       </div>
     <% }); %>
   </div>

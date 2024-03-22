@@ -3,14 +3,14 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=0"/>
     <title>Registration Page</title>
     <link rel="stylesheet" href="registration.css">
 </head>
 
 <body>
     <div class="container">
-        <form class="registration-form" method="post">
+        <form class="registration-form" method="post" enctype="multipart/form-data">
             <h2>Register</h2>
             <div class="form-group">
                 <label for="username">الاسم</label>
@@ -23,19 +23,19 @@
                 </div>
                 <div>
                     <label for="grade">رابعه</label>
-                    <input type="radio" id="grade" value="4" name="grade"required>
+                    <input type="radio" id="grade" value="4" name="grade" required>
                 </div>
                 <div>
-                    <label >خامسة</label>
-                    <input type="radio" id="grade" value="5" name="grade"required>
+                    <label>خامسة</label>
+                    <input type="radio" id="grade" value="5" name="grade" required>
                 </div>
                 <div>
                     <label for="grade">سادسه</label>
-                    <input type="radio" id="grade1" value="6" name="grade"required>
+                    <input type="radio" id="grade1" value="6" name="grade" required>
                 </div>
             </div>
-            <label for="fileInput">Select a file or capture an image:</label>
-  <input type="file" id="fileInput" name="fileInput" accept="image/*" capture="camera">
+            <label for="avatar">Select a file or capture an image:</label>
+            <input type="file" id="fileInput" name="avatar" accept="image/*">
             <button type="submit">Register</button>
         </form>
     </div>

@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=0"/>
   <title>Profile Page</title>
   <style>
     body {
@@ -10,38 +11,58 @@
       background-color: #f4f4f4;
       margin: 0;
       padding: 0;
+      direction: rtl;
     }
+
     .container {
-      max-width: 600px;
-      margin: 50px auto;
+      display: flex;
+      flex-wrap: nowrap;
+      flex-direction:column;
+      align-items: center;
+      margin: 50px;
       background-color: #fff;
       padding: 20px;
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
+
     h1 {
       font-size: 24px;
       margin-bottom: 20px;
     }
+
     p {
       margin: 10px 0;
     }
+
     strong {
       font-weight: bold;
     }
+
+    img {
+      height: 150px;
+    }
+
+    
   </style>
 </head>
+
 <body>
   <div class="container">
-    <h1>Profile</h1>
-    <div>
-      <p><strong>Name:</strong> <%= profileData2.name %></p>
-      <p><strong>Grade:</strong> </p>
-      <p><strong>Meetings Attended:</strong> <%= profileData2.meetingsAttended %></p>
-      <div id="qrCodeContainer"> </div>
-      <img src="<%= profileData2.imgUrl %>" alt="">
-       
-    </div>
+    <img src="/<%=profileData2.profilepic%>" alt="profilepicture">
+      <div class="textcontainer">
+        <p><strong>الاسم:</strong>
+          <%= profileData2.name %>
+        </p>
+        <p><strong>الفصل:</strong>
+          <%= profileData2.grade %>
+        </p>
+        <p><strong>حضور الاجتماعات:</strong>
+          <%= profileData2.meetingsAttended %>
+        </p>
+      </div>
+      <img src="<%=profileData2.imgUrl %>" alt="qrcodepicture">
   </div>
 </body>
+
 </html>
