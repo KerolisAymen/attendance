@@ -7,6 +7,7 @@ const qr = require("qrcode");
 const axios = require("axios");
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
+const ejs = require('ejs');
 
 // Set the view engine to use EJS
 app.set("view engine", "ejs");
@@ -37,8 +38,22 @@ const studentSchema = new mongoose.Schema
     ],
 });
 
+
+studentSchema.methods.gettotalbonus = async function(){
+  let bonus = 0; 
+  this.meetings.forEach(element => {
+    if(element.meeting.name== "تسبحة")
+    bonus+= 50 ; 
+  else
+  bonus+=30;
+  });
+  console.log(bonus); 
+  return bonus;
+}
+
 const Student = mongoose.model("Student", studentSchema);
 const Meeting = mongoose.model("Meeting", meetingSchema);
+
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
@@ -79,10 +94,14 @@ app.post("/registration.html",upload.single("avatar"),
 );
 
 app.get("/attendanceReview/:ID", async (req, res) => {
-  const profileData = await Student.findOne({ ID: req.params.ID }).populate(
-    "meetings.meeting"
-  );
-  // console.log(profileData.meetings.length)
+  const profileData = await Student.findOne({ ID: req.params.ID }).populate("meetings.meeting");
+  const allstudents = await Student.find({grade :profileData.grade}).populate("meetings.meeting");
+  const grapharray = []; 
+  await allstudents.forEach(async student => {
+   
+    grapharray.push([student.name,await student.gettotalbonus()]) ; 
+  });
+  console.log(grapharray);
   if (profileData != undefined) {
     let qrsrc;
     const apiUrl = "https://api.qrserver.com/v1/create-qr-code/";
@@ -103,15 +122,18 @@ app.get("/attendanceReview/:ID", async (req, res) => {
 
     console.log(profileData.meetings);
     const profileData2 = {
+      ID : profileData.ID,
       name: profileData.name,
       grade: profileData.grade,
       meetingsAttended: profileData.meetings.length,
       meetings: profileData.meetings,
       profilepic: profileData.profilepic,
       imgUrl: qrsrc,
+      graph : grapharray
     };
 
     JSON.stringify(profileData2);
+    console.log(profileData2);
     res.render("profile", { profileData2 });
   } else {
     res.send("<h1>this user not found</h1>");
@@ -164,6 +186,11 @@ app.post("/putmeetings", async (req, res) => {
   });
 });
 
+app.post("/forgraph",async(req,res)=>{
+  console.log(req.body.ID);
+  const student =  await Student.find({ID:req.body.ID})
+  // res.json({name:"kero"}) ; 
+})
 mongoose
   .connect(
     "mongodb+srv://Kerolis456:afDaYNP5YvABh69L@nodejsproject.jyjtxsy.mongodb.net/?retryWrites=true&w=majority&appName=nodejsProject"
