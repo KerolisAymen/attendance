@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meeting Scheduler</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+
+    .container {
+    margin: 35px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    form {
+      margin-bottom: 20px;
+    }
+
+    label {
+      margin-right: 10px;
+    }
+
+    input[type="date"],
+    select {
+      padding: 8px;
+      margin-bottom: 10px;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    button[type="submit"] {
+      padding: 10px 20px;
+      background-color: #4caf50;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #45a049;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      margin-bottom: 5px;
+      padding: 8px;
+      background-color: #f9f9f9;
+      border-radius: 4px;
+      border-left: 4px solid #4caf50;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Meeting Scheduler</h1>
+    <form id="meeting-form">
+      <div>
+        <label for="meeting-date">Meeting Date:</label>
+        <input type="date" id="meeting-date" required>
+      </div>
+      <div>
+        <label for="meeting-type">Meeting Type:</label>
+        <select id="meeting-type" required>
+          <option value="">Select Meeting Type</option>
+          <option value="اجتماع">اجتماع</option>
+          <option value="تسبحة">تسبحة</option>
+        </select>
+      </div>
+      <button type="submit">Add Meeting</button>
+    </form>
+    <ol id="meeting-list"></ol>
+  </div>
+
+  <script >
+
+    fetch("/getmeetings").then((response) => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    }).then((data) => {
+      console.log(data);
+      data.forEach(element => {
+
+
+        var date = element.date;
+        var type = element.name;
+        makelistitem(date, type);
+      });
+    }).catch((error) => {
+      console.log(error);
+    })
+
+    document.getElementById("meeting-form").addEventListener("submit", function (event) {
+      event.preventDefault();
+      addMeeting();
+    });
+
+
+
+
+
+
+
+    function addMeeting() {
+
+      var dateInput = document.getElementById("meeting-date");
+      var typeSelect = document.getElementById("meeting-type");
+      var date = dateInput.value;
+      var type = typeSelect.value;
+      if (date === "" || type === "") {
+        alert("Please select a date and meeting type.");
+        return;
+      }
+      fetch("/putmeetings", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ date: date, type: type })
+      }).then(() => {
+
+        makelistitem(type, date);
+
+      })
+        .catch((error) => {
+          alert(error);
+        })
+      // You can send this data to the backend for storage here
+      // For example, using AJAX to send a POST request to a server endpoint
+    }
+
+    function makelistitem(type, date) {
+      var listItem = document.createElement("li");
+      listItem.textContent = type + " - " + date;
+      var meetingList = document.getElementById("meeting-list");
+      meetingList.appendChild(listItem);
+
+      var deletebtn = document.createElement("button");
+      deletebtn.className = "deletebtn";
+      deletebtn.textContent = "delete";
+      listItem.appendChild(deletebtn);
+    }
+
+
+  </script>
+  <script defer>
+
+ document.addEventListener("DOMContentLoaded",()=>{
+  var myList = document.getElementById("meeting-list");
+
+
+// Add event listener to the list
+myList.addEventListener("click", function(event) {
+    // Check if the clicked element is a delete button
+    if (event.target.classList.contains("deletebtn")) {
+        var listItem = event.target.parentNode;
+        console.log(listItem);
+        myList.removeChild(listItem);
+    }
+});
+ })
+
+  </script>
+</body>
+
+</html>

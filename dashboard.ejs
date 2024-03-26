@@ -1,48 +1,76 @@
 <!-- views/index.ejs -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=0" />
   <title>User List</title>
   <style>
     .grid-container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-    /* grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); */
-    grid-gap: 10px;
-    padding: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      /* grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); */
+      grid-gap: 10px;
+      padding: 20px;
     }
 
     .user-card {
-        padding: 10px;
-     height: 200px;
-     width: 200px;
-    text-align: center;
-    background-color: #612d8d;
-    border-radius: 20px;
-    color: white;
-    font-size: larger;
+      padding: 10px;
+      height: 200px;
+      width: 200px;
+      text-align: center;
+      background-color: #612d8d;
+      border-radius: 20px;
+      color: white;
+      font-size: larger;
+
     }
-    .profilepic{
-      height: 85%;
+
+    .profilepic {
+      height: 70%;
       background-color: white;
       border-radius: 15px;
       box-shadow: 5px black;
     }
+
+    .textdata {}
+
+    .user-card:hover {
+      background-color: #0056b3;
+    }
   </style>
 </head>
+
 <body>
   <h1>User List</h1>
   <div class="grid-container">
-    <% users.forEach(user => { %>
-      <div class="user-card">
-        
-          <img src="<%=user.profilepic %>" alt="profilepic" class="profilepic">
-        <p style="margin: 0px;"><%= user.name %></p>
+    <% users.forEach(user=> { %>
+      <div class="user-card" onclick="openprofile('<%= user.name %>')">
+
+        <img src="<%=user.profilepic %>" alt="profilepic" class="profilepic">
+        <div class="textdata">
+          <div>
+            <%= user.ID %>
+          </div>
+          <div>
+            <%= user.name %>
+          </div>
+          <div>
+            <%= user.meetings.length %>
+          </div>
+        </div>
       </div>
-    <% }); %>
+      <% }); %>
   </div>
+
+  <script>
+    function openprofile(name){
+      window.location.href = "attendanceReview/"+encodeURI(name);
+
+    }
+  </script>
 </body>
+
 </html>
