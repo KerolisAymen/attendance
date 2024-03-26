@@ -47,7 +47,7 @@
   <h1>User List</h1>
   <div class="grid-container">
     <% users.forEach(user=> { %>
-      <div class="user-card" onclick="openprofile('<%= user.name %>')">
+      <div class="user-card" onclick="openprofile('<%= user.ID %>')">
 
         <img src="<%=user.profilepic %>" alt="profilepic" class="profilepic">
         <div class="textdata">
