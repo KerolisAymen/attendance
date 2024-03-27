@@ -8,6 +8,7 @@
   <script src="https://www.gstatic.com/charts/loader.js"></script>
   <style>
     body {
+      overflow-x: hidden ;
       font-family: Arial, sans-serif;
       background-color: #f4f4f4;
       margin: 0;
@@ -56,10 +57,7 @@
       width: -webkit-fill-available;
     }
     #chart_div{
-      display: flex;
-      flex-wrap: nowrap;
-      flex-direction: column;
-      align-items: center;
+      width: auto;
       margin: 50px;
       background-color: #fff;
       padding: 20px;
@@ -97,7 +95,9 @@
 
     <div class="container">
       <h2>
-        <%= item.meeting.name + "--" + item.meeting.date %>
+        <%= item.meeting.name + "--" + item.meeting.date.toISOString().replace("T00:00:00.000Z", "") %>
+
+        
       </h2>
       <% if (item.meeting.name==="تسبحة" ) { %>
         <li>+50bonus</li>
@@ -140,7 +140,7 @@
     
             // Define chart options
             var options = {
-                title: 'رسم بيانى للبوينتس انت و اصحابك',
+                title: 'احصائيات سنه <%= profileData2.grade %>',
                 legend: { position: 'none' },
                 chartArea: { width: '50%' },
                 hAxis: {
