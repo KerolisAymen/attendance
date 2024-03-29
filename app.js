@@ -9,6 +9,22 @@ const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const ejs = require('ejs');
 
+
+
+// const googleStorage = require('@google-cloud/storage');
+// var serviceAccount = require("./serviceAccountKey.json");
+
+// var admin = require("firebase-admin");
+
+// admin.initializeApp({
+//     credential: admin.credential.cert(serviceAccount),
+//     storageBucket: "gs://attendance-417319.appspot.com"
+// });
+
+// var bucket = admin.storage().bucket();
+
+// bucket.upload(path.join(__dirname,"/beeb.mp3"))
+
 // Set the view engine to use EJS
 app.set("view engine", "ejs");
 
@@ -65,14 +81,14 @@ app.get("/registration", (req, res) => {
 app.post("/registration.html",upload.single("avatar"),
   async (req, res, next) => {
     const username = req.body.username;
-    // console.log(req.body);
+    console.log("herrrrrrrrrreeee"+req.body.picurl);
 
     const grade = req.body.grade;
     let newuserid = Math.floor((Math.random() * 99999) + 10000)
     let newStudent = new Student({
       ID : newuserid , 
       name: username,
-      profilepic: req.file.path,
+      profilepic: req.body.picurl,
       grade: grade,
     });
 

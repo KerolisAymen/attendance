@@ -3,9 +3,11 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=0" />
     <title>Registration Page</title>
     <link rel="stylesheet" href="registration.css">
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-storage.js"></script>
 </head>
 
 <body>
@@ -19,26 +21,88 @@
             <div>
                 <div>
                     <label for="grade">تالته</label>
-                    <input type="radio" id="grade" value="3" name="grade" required>
+                    <input type="radio" class="grade" value="3" name="grade" required>
                 </div>
                 <div>
                     <label for="grade">رابعه</label>
-                    <input type="radio" id="grade" value="4" name="grade" required>
+                    <input type="radio" class="grade" value="4" name="grade" required>
                 </div>
                 <div>
                     <label>خامسة</label>
-                    <input type="radio" id="grade" value="5" name="grade" required>
+                    <input type="radio" calss="grade" value="5" name="grade" required>
                 </div>
                 <div>
                     <label for="grade">سادسه</label>
-                    <input type="radio" id="grade1" value="6" name="grade" required>
+                    <input type="radio" class = "grade" value="6" name="grade" required>
                 </div>
             </div>
             <label for="avatar">Select a file or capture an image:</label>
-            <input type="file" id="fileInput" name="avatar" accept="image/*" required>
-            <button type="submit">Register</button>
+            <input type="file" id="fileInput" name="avatar" accept="image/*">
+            <input type="text" name="picurl" id="picurl"  style="display: none;">
+            <button  id="button">Register</button>
+            <div id="progressBarContainer">
+                <div id="progressBar" style="background-color: blueviolet;
+                border-radius: 30px ; margin: 20px;"></div>
+            </div>
         </form>
     </div>
+
+    <script>
+        const firebaseConfig = { apiKey: "AIzaSyBDr6xNYgScGXp3J_-SDle7fs-KgidwNKg", authDomain: "attendance-9e718.firebaseapp.com", projectId: "attendance-9e718", storageBucket: "attendance-9e718.appspot.com", messagingSenderId: "531422046441", appId: "1:531422046441:web:613767e5b0cfcb044fe878", measurementId: "G-PNMZ70MLFN", storageBucket: 'gs://attendance-9e718.appspot.com' };
+
+        const app = firebase.initializeApp(firebaseConfig);
+        const storage = firebase.storage();
+
+        const button = document.getElementById('button');
+
+        button.addEventListener("click", function (event) {
+            // event.preventDefault();
+
+
+            const fileInput = document.getElementById("fileInput");
+            const name = document.getElementById("username").value;
+            const file = fileInput.files[0]; // Get the selected file
+
+            if (file == undefined)
+            return
+            
+            const storageRef = storage.ref().child("myimages");
+            const folderRef = storageRef.child(name + Date.now());
+
+            const progressBar = document.getElementById("progressBar");
+            const progressBarContainer = document.getElementById("progressBarContainer");
+            
+            if(file ===undefined) return
+            // Reset progress bar
+            progressBar.style.width = '0%';
+            progressBar.style.height = '50px';
+            const uploadTask = folderRef.put(file);
+
+            uploadTask.on('state_changed',
+                (snapshot) => {
+                    // Update progress bar during upload
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    progressBar.style.width = progress + '%';
+                },
+                (error) => {
+                    console.error('Upload failed:', error);
+                },
+                () => {
+                    // Upload complete
+                    console.log('Upload complete!');
+                    folderRef.getDownloadURL().then((url) => {
+                        console.log('File download URL:', url);
+                        document.getElementById("picurl").value = url;
+                        // document.getElementsByClassName("registration-form")[0].submit();
+                        document.getElementById("button").click(); 
+                    }).catch((error) => {
+                        console.error('Error getting download URL:', error);
+                    });
+                }
+            );
+        });
+
+    </script>
 </body>
 
 </html>

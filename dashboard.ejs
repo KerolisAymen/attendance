@@ -18,7 +18,7 @@
 
     .user-card {
       padding: 10px;
-      height: 200px;
+      height: 250px;
       width: 200px;
       text-align: center;
       background-color: #612d8d;
@@ -49,7 +49,14 @@
     <% users.forEach(user=> { %>
       <div class="user-card" onclick="openprofile('<%= user.ID %>')">
 
-        <img src="<%=user.profilepic %>" alt="profilepic" class="profilepic">
+        <img src="
+        <% if (user.profilepic == "") { %>
+          https://www.svgrepo.com/show/384377/account-avatar-person-profile-user.svg
+      <% } else { %>
+          <%= user.profilepic %>
+      <% } %>
+      
+        " alt="profilepic" class="profilepic">
         <div class="textdata">
           <div>
             <%= user.ID %>

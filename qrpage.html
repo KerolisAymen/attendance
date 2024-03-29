@@ -1,39 +1,60 @@
-<!-- Index.html file -->
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=0"/>
-	<link rel="stylesheet" href="/styles.css">
-	<title>QR Code Scanner / Reader
-	</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Searchable Select Dropdown</title>
+    <style>
+        /* Style for the select input */
+        #searchSelect {
+            width: 200px;
+            padding: 5px;
+            font-size: 16px;
+        }
+    </style>
 </head>
-
 <body>
 
-	<div class="container2">
-		<label for="meeting-select">اختار الاجتماع</label>
-		<select name="meetings" id="meeting-select" required>
-		  <option value="">--Please choose an option--</option>
-		</select>
-	  </div>
-	
+<!-- Searchable Select Dropdown -->
+<select id="searchSelect" onkeydown="handleKeyDown(event)">
+    <option value="">Select an option</option>
+    <option value="1">Option 1</option>
+    <option value="2">Option 2</option>
+    <option value="3">Option 3</option>
+    <option value="4">Option 4</option>
+    <option value="5">Option 5</option>
+</select>
 
-	<div class="container">
-		<h1>Scan QR Codes</h1>
-		<div class="section">
-			<div id="my-qr-reader"></div>
-		</div>
-	</div>
-    <audio id="beep" src="beeb.mp3"></audio>
-	<script
-		src="https://unpkg.com/html5-qrcode">
-        
-	</script>
-    <script src="https://apis.google.com/js/api.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-	<script src="script.js"></script>
+<script>
+    function handleKeyDown(event) {
+        var select = document.getElementById('searchSelect');
+        var options = select.options;
+        var selectedIndex = select.selectedIndex;
+
+        // Handle arrow key navigation
+        if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+            event.preventDefault(); // Prevent default behavior of arrow keys
+
+            if (event.key === "ArrowDown" && selectedIndex < options.length - 1) {
+                select.selectedIndex = selectedIndex + 1;
+            } else if (event.key === "ArrowUp" && selectedIndex > 0) {
+                select.selectedIndex = selectedIndex - 1;
+            }
+        }
+
+        // Handle search functionality
+        if (/^[a-zA-Z0-9]$/.test(event.key)) {
+            var keyPressed = event.key.toLowerCase();
+            for (var i = 0; i < options.length; i++) {
+                var optionText = options[i].text.toLowerCase();
+                if (optionText.startsWith(keyPressed)) {
+                    select.selectedIndex = i;
+                    break;
+                }
+            }
+        }
+    }
+</script>
+
 </body>
-
 </html>
