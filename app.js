@@ -7,9 +7,7 @@ const qr = require("qrcode");
 const axios = require("axios");
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
-const ejs = require('ejs');
-
-
+const ejs = require("ejs");
 
 // const googleStorage = require('@google-cloud/storage');
 // var serviceAccount = require("./serviceAccountKey.json");
@@ -39,37 +37,32 @@ const meetingSchema = new mongoose.Schema({
   date: Date,
 });
 
-const studentSchema = new mongoose.Schema
-({
-    ID : String,
-    name: String,
-    grade: Number,
-    profilepic: String,
-    meetings: [
-      {
-        _id: false ,
-        meeting: { type: mongoose.Schema.Types.ObjectId, ref: "Meeting" },
-        bonusandminus: [Number], // Array of strings for bonus and minus data
-      },
-    ],
+const studentSchema = new mongoose.Schema({
+  ID: String,
+  name: String,
+  grade: Number,
+  profilepic: String,
+  meetings: [
+    {
+      _id: false,
+      meeting: { type: mongoose.Schema.Types.ObjectId, ref: "Meeting" },
+      bonusandminus: [Number], // Array of strings for bonus and minus data
+    },
+  ],
 });
 
-
-studentSchema.methods.gettotalbonus = async function(){
-  let bonus = 0; 
-  this.meetings.forEach(element => {
-    if(element.meeting.name== "تسبحة")
-    bonus+= 50 ; 
-  else
-  bonus+=30;
+studentSchema.methods.gettotalbonus = async function () {
+  let bonus = 0;
+  this.meetings.forEach((element) => {
+    if (element.meeting.name == "تسبحة") bonus += 50;
+    else bonus += 30;
   });
-  console.log(bonus); 
+  console.log(bonus);
   return bonus;
-}
+};
 
 const Student = mongoose.model("Student", studentSchema);
 const Meeting = mongoose.model("Meeting", meetingSchema);
-
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
@@ -78,15 +71,17 @@ app.get("/registration", (req, res) => {
   res.sendFile(path.join(__dirname, "registration.html"));
 });
 
-app.post("/registration.html",upload.single("avatar"),
+app.post(
+  "/registration.html",
+  upload.single("avatar"),
   async (req, res, next) => {
     const username = req.body.username;
-    console.log("herrrrrrrrrreeee"+req.body.picurl);
+    console.log("herrrrrrrrrreeee" + req.body.picurl);
 
     const grade = req.body.grade;
-    let newuserid = Math.floor((Math.random() * 99999) + 10000)
+    let newuserid = Math.floor(Math.random() * 99999 + 10000);
     let newStudent = new Student({
-      ID : newuserid , 
+      ID: newuserid,
       name: username,
       profilepic: req.body.picurl,
       grade: grade,
@@ -100,7 +95,9 @@ app.post("/registration.html",upload.single("avatar"),
         .save()
         .then((s) => {
           console.log(s);
-          res.send(`<h1>تم التسجيل بنجاح</h1> <h2>your id :</h2><h2> ${newuserid} </h2>`);
+          res.send(
+            `<h1>تم التسجيل بنجاح</h1> <h2>your id :</h2><h2> ${newuserid} </h2>`
+          );
         })
         .catch((error) => {
           console.log(error);
@@ -110,15 +107,20 @@ app.post("/registration.html",upload.single("avatar"),
 );
 
 app.get("/attendanceReview/:ID", async (req, res) => {
-  const profileData = await Student.findOne({ ID: req.params.ID }).populate("meetings.meeting");
-  const allstudents = await Student.find({grade :profileData.grade}).populate("meetings.meeting");
-  const grapharray = []; 
-  await allstudents.forEach(async student => {
-   
-    grapharray.push([student.name,await student.gettotalbonus()]) ; 
-  });
+  const profileData = await Student.findOne({ ID: req.params.ID }).populate(
+    "meetings.meeting"
+  );
+
   console.log(grapharray);
   if (profileData != undefined) {
+    const allstudents = await Student.find({
+      grade: profileData.grade,
+    }).populate("meetings.meeting");
+    const grapharray = [];
+    await allstudents.forEach(async (student) => {
+      grapharray.push([student.name, await student.gettotalbonus()]);
+    });
+
     let qrsrc;
     const apiUrl = "https://api.qrserver.com/v1/create-qr-code/";
     const params = {
@@ -138,14 +140,14 @@ app.get("/attendanceReview/:ID", async (req, res) => {
 
     console.log(profileData.meetings);
     const profileData2 = {
-      ID : profileData.ID,
+      ID: profileData.ID,
       name: profileData.name,
       grade: profileData.grade,
       meetingsAttended: profileData.meetings.length,
       meetings: profileData.meetings,
       profilepic: profileData.profilepic,
       imgUrl: qrsrc,
-      graph : grapharray
+      graph: grapharray,
     };
 
     JSON.stringify(profileData2);
@@ -163,27 +165,35 @@ app.post("/qrcodepage", async (req, res) => {
   const newdata = await {
     meeting: meeting1.id,
   };
-  const arr = await name.meetings.filter((object) => object.meeting.ObjectId === meeting1.id);
-  // console.log(name); 
+  const arr = await name.meetings.filter(
+    (object) => object.meeting.ObjectId === meeting1.id
+  );
+  // console.log(name);
   // console.log(name.meetings[0].meeting.toString());
   // console.log(meeting1.id);
-  // console.log(arr); 
-  if (await name.meetings.filter((object) => object.meeting.toString() === meeting1.id).length == 0) { // use this here
+  // console.log(arr);
+  if (
+    (await name.meetings.filter(
+      (object) => object.meeting.toString() === meeting1.id
+    ).length) == 0
+  ) {
+    // use this here
     await name.meetings.push(newdata);
-    await name.save()
+    await name
+      .save()
       .then((saveddata) => {
-        res.send({ message:" saved", success: true });
+        res.send({ message: " saved", success: true });
       })
       .catch((err) => {
-        res.send({message:"error saving"})
+        res.send({ message: "error saving" });
       });
   } else {
-    res.send({ message:"saved before" });
+    res.send({ message: "saved before" });
   }
 });
 
 app.get("/dashboard", async (req, res) => {
-  const users = await Student.find({}) //.populate("meetings.meeting");
+  const users = await Student.find({}); //.populate("meetings.meeting");
   console.log(users);
   res.render("dashboard", { users });
 });
@@ -202,11 +212,11 @@ app.post("/putmeetings", async (req, res) => {
   });
 });
 
-app.post("/forgraph",async(req,res)=>{
+app.post("/forgraph", async (req, res) => {
   console.log(req.body.ID);
-  const student =  await Student.find({ID:req.body.ID})
-  // res.json({name:"kero"}) ; 
-})
+  const student = await Student.find({ ID: req.body.ID });
+  // res.json({name:"kero"}) ;
+});
 mongoose
   .connect(
     "mongodb+srv://Kerolis456:afDaYNP5YvABh69L@nodejsproject.jyjtxsy.mongodb.net/?retryWrites=true&w=majority&appName=nodejsProject"
