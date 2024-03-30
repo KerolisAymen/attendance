@@ -111,7 +111,7 @@ app.get("/attendanceReview/:ID", async (req, res) => {
     "meetings.meeting"
   );
 
-  console.log(grapharray);
+
   if (profileData != undefined) {
     const allstudents = await Student.find({
       grade: profileData.grade,
