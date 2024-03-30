@@ -74,10 +74,12 @@
      <% if (profileData2.profilepic == "") { %>
           https://www.svgrepo.com/show/384377/account-avatar-person-profile-user.svg
       <% } else { %>
-          <%= user.profilepic %>
+          <%= profileData2.profilepic %>
       <% } %>
     
     " alt="profilepicture">
+
+    
     <div class="textcontainer">
       <p><strong>الاسم:</strong>
         <%= profileData2.name %>
