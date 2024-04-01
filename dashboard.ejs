@@ -13,29 +13,36 @@
       justify-content: center;
       /* grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); */
       grid-gap: 10px;
-      padding: 20px;
+      /* padding: 20px; */
     }
 
     .user-card {
-      padding: 10px;
-      height: 250px;
-      width: 200px;
-      text-align: center;
-      background-color: #612d8d;
-      border-radius: 20px;
-      color: white;
-      font-size: larger;
+      display: flex;
+    padding: 5px;
+    height: 80px;
+    width: 200px;
+    text-align: center;
+    background-color: #612d8d;
+    border-radius: 20px;
+    color: white;
+    font-size: larger;
+    flex-direction: row-reverse;
+    justify-content: space-evenly;
+    align-items: center;
 
     }
 
     .profilepic {
-      height: 70%;
-      background-color: white;
-      border-radius: 15px;
-      box-shadow: 5px black;
+         /* width: 40%; */
+    max-width: 40%;
+    height: -webkit-fill-available;
+    background-color: white;
+    border-radius: 15px;
     }
 
-    .textdata {}
+    .textdata {
+      width: -webkit-fill-available;
+    }
 
     .user-card:hover {
       background-color: #0056b3;
