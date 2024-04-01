@@ -8,6 +8,9 @@ const axios = require("axios");
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const ejs = require("ejs");
+const fs = require('fs');
+
+
 
 // const googleStorage = require('@google-cloud/storage');
 // var serviceAccount = require("./serviceAccountKey.json");
@@ -64,6 +67,7 @@ studentSchema.methods.gettotalbonus = async function () {
 const Student = mongoose.model("Student", studentSchema);
 const Meeting = mongoose.model("Meeting", meetingSchema);
 
+
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
@@ -71,9 +75,7 @@ app.get("/registration", (req, res) => {
   res.sendFile(path.join(__dirname, "registration.html"));
 });
 
-app.post(
-  "/registration.html",
-  upload.single("avatar"),
+app.post("/registration.html",upload.single("avatar"),
   async (req, res, next) => {
     const username = req.body.username;
     console.log("herrrrrrrrrreeee" + req.body.picurl);

@@ -71,7 +71,7 @@
   <div class="container">
     <img src="
     
-     <% if (profileData2.profilepic == "") { %>
+     <% if (profileData2.profilepic == "" || profileData2.profilepic==undefined) { %>
           https://www.svgrepo.com/show/384377/account-avatar-person-profile-user.svg
       <% } else { %>
           <%= profileData2.profilepic %>

@@ -50,7 +50,7 @@
       <div class="user-card" onclick="openprofile('<%= user.ID %>')">
 
         <img src="
-        <% if (user.profilepic == "") { %>
+        <% if (user.profilepic == "" || user.profilepic == undefined) { %>
           https://www.svgrepo.com/show/384377/account-avatar-person-profile-user.svg
       <% } else { %>
           <%= user.profilepic %>
