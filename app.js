@@ -9,8 +9,9 @@ const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const ejs = require("ejs");
 const fs = require('fs');
-
-
+const cookieParser = require("cookie-parser") ; 
+const jwt = require("jsonwebtoken")
+const secretKey ="kero" ;
 
 // const googleStorage = require('@google-cloud/storage');
 // var serviceAccount = require("./serviceAccountKey.json");
@@ -27,58 +28,39 @@ const fs = require('fs');
 // bucket.upload(path.join(__dirname,"/beeb.mp3"))
 
 // Set the view engine to use EJS
+
 app.set("view engine", "ejs");
 
 // Set the directory for EJS templates (optional if you're using a single folder)
-app.set("views", __dirname);
+app.set("views", path.join(__dirname,"views"));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname)));
 app.use(express.json());
-const meetingSchema = new mongoose.Schema({
-  name: String,
-  date: Date,
+app.use(cookieParser());
+app.use(bodyParser.json());
+
+const {Student , Meeting} = require("./model/User")
+const {register,adminAuth,userAuth } = require("./Auth/auth.js");
+
+
+//  (async()=>{
+//   const temp = await Student.find({}); 
+//   console.log(temp[5]);
+// }) ()
+
+
+app.get("/", adminAuth ,  (req, res) => {
+  res.sendFile(path.join(__dirname, "home.html"));
 });
 
-const studentSchema = new mongoose.Schema({
-  ID: String,
-  name: String,
-  grade: Number,
-  profilepic: String,
-  meetings: [
-    {
-      _id: false,
-      meeting: { type: mongoose.Schema.Types.ObjectId, ref: "Meeting" },
-      bonusandminus: [Number], // Array of strings for bonus and minus data
-    },
-  ],
-});
-
-studentSchema.methods.gettotalbonus = async function () {
-  let bonus = 0;
-  this.meetings.forEach((element) => {
-    if (element.meeting.name == "تسبحة") bonus += 50;
-    else bonus += 30;
-  });
-  console.log(bonus);
-  return bonus;
-};
-
-const Student = mongoose.model("Student", studentSchema);
-const Meeting = mongoose.model("Meeting", meetingSchema);
-
-
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
-});
-app.get("/registration", (req, res) => {
+app.get("/registration", adminAuth,(req, res) => {
   res.sendFile(path.join(__dirname, "registration.html"));
 });
 
-app.post("/registration.html",upload.single("avatar"),
+app.post("/submit",upload.single("avatar"),
   async (req, res, next) => {
     const username = req.body.username;
-    console.log("herrrrrrrrrreeee" + req.body.picurl);
 
     const grade = req.body.grade;
     let newuserid = Math.floor(Math.random() * 99999 + 10000);
@@ -108,8 +90,15 @@ app.post("/registration.html",upload.single("avatar"),
   }
 );
 
-app.get("/attendanceReview/:ID", async (req, res) => {
-  const profileData = await Student.findOne({ ID: req.params.ID }).populate(
+app.get("/attendanceReview",userAuth, async (req, res) => {
+
+  let ID ; 
+  const token = req.cookies.token ; 
+  if (!token) return ; 
+  jwt.verify(token, "kero" , (err ,decodedToken)=>{
+    ID = decodedToken.ID  ; 
+  })
+  const profileData = await Student.findOne({ ID: ID}).populate(
     "meetings.meeting"
   );
 
@@ -127,7 +116,7 @@ app.get("/attendanceReview/:ID", async (req, res) => {
     const apiUrl = "https://api.qrserver.com/v1/create-qr-code/";
     const params = {
       size: "300x300",
-      data: req.params.ID,
+      data: ID,
     };
 
     await axios
@@ -160,7 +149,10 @@ app.get("/attendanceReview/:ID", async (req, res) => {
   }
 });
 
-app.post("/qrcodepage", async (req, res) => {
+app.route("/qrpage").get(adminAuth,(req,res)=>{
+  res.sendFile(path.join(__dirname, "qrpage.html"));
+})
+app.post("/qrcodepage", adminAuth, async (req, res) => {
   console.log(req.body);
   const name = await Student.findOne({ ID: req.body.decodeText });
   const meeting1 = await Meeting.findById(req.body.selectedValue);
@@ -194,16 +186,19 @@ app.post("/qrcodepage", async (req, res) => {
   }
 });
 
-app.get("/dashboard", async (req, res) => {
+app.get("/dashboard",adminAuth, async (req, res) => {
   const users = await Student.find({}); //.populate("meetings.meeting");
   console.log(users);
   res.render("dashboard", { users });
 });
 
-app.get("/getmeetings", async (req, res) => {
+app.get("/addnewmeeting" ,adminAuth, (req,res)=>{
+  res.sendFile(path.join(__dirname, "addnewmeeting.html"));
+})
+app.get("/getmeetings",adminAuth, async (req, res) => {
   res.send(await Meeting.find({}));
 });
-app.post("/putmeetings", async (req, res) => {
+app.post("/putmeetings", adminAuth, async (req, res) => {
   console.log(req.body);
   const newmeeting = new Meeting({
     name: req.body.type,
@@ -214,10 +209,28 @@ app.post("/putmeetings", async (req, res) => {
   });
 });
 
-app.post("/forgraph", async (req, res) => {
-  console.log(req.body.ID);
-  const student = await Student.find({ ID: req.body.ID });
-  // res.json({name:"kero"}) ;
+app.route("/login").get((req,res)=>{
+  res.sendFile(path.join(__dirname,"login.html"))
+}).post( async (req, res) => {
+  const username= req.body.username;
+  // console.log(username); 
+ const user = await Student.findOne({ID : username})
+ console.log(user); 
+  if (user) {
+    // Generate token
+    const token = jwt.sign({ ID: user.ID , role: user.role}, secretKey);
+    // res.cookie('token', token, { httpOnly: false });
+    res.json({ token });
+  } else {
+    res.status(401).json({ error: 'Invalid username or password' });
+  }
+
+});
+
+app.get("/print", async (req, res) => {
+  const users = await Student.find({}); //.populate("meetings.meeting");
+  
+  res.render("print", { users });
 });
 mongoose
   .connect(

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=0" />
+  <title>Home Page</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      background-image: url('https://source.unsplash.com/1920x1080/?scout');
+      background-size: cover;
+      background-attachment: fixed;
+      animation: scrollBackground 30s linear infinite;
+    }
+
+    @keyframes scrollBackground {
+      from {
+        background-position: 0 0;
+      }
+
+      to {
+        background-position: 100% 0;
+      }
+    }
+
+    .container {
+      margin: 50px;
+      padding: 30px;
+      border-radius: 10px;
+      background-color: rgba(255, 255, 255, 0.3);
+
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 36px;
+      color: #fff;
+      margin-bottom: 30px;
+    }
+
+    .button {
+      width: 250px;
+      display: inline-block;
+      margin: 10px;
+      font-size: 18px;
+      text-decoration: none;
+      color: #000000;
+      background-color: white;
+      /* border: 2px solid transparent; */
+      /* Added border */
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      /* Smooth transition for all properties */
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      /* Added box shadow */
+      overflow: hidden;
+      border-bottom: 3px solid green;
+
+    }
+
+    .button:hover {
+      background-color: #f0f0f0;
+      border-color: #ccc;
+      transform: translateY(-6px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      outline: blue 1px solid;
+    }
+
+    .button img {
+      width: 100px;
+      /* Adjusted image size */
+      height: 100px;
+      /* Adjusted image size */
+      vertical-align: middle;
+      /* Align image vertically */
+      margin-right: 10px;
+      /* Added spacing between image and text */
+      margin: 10px;
+    }
+
+    h3 {
+      background-color: rgb(126, 221, 126);
+      margin: 0px;
+      padding: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>اهلا بيك فى فريق كوكب البرية</h1>
+
+
+
+    <a href="qrpage" class="button">
+      <img src="https://www.svgrepo.com/show/379577/qr-code-scan.svg" alt="">
+      <h3>qr code scanner</h3>
+    </a>
+
+
+    <a href="registration" class="button">
+      <img src="https://www.svgrepo.com/show/246367/add-user-add.svg" alt="">
+      <h3>
+        Add new user
+      </h3>
+    </a>
+
+    <a href="dashboard" class="button">
+      <img src="https://www.svgrepo.com/show/144093/archive.svg" alt="">
+      <h3>
+        dashboard
+      </h3>
+      
+    </a>
+
+    <a href="addnewmeeting" class="button">
+      <img src="https://www.svgrepo.com/show/499786/add-to.svg" alt="">
+      <h3 style="background-color: rgb(3, 3, 24); color: white;">
+        Add new meeting
+      </h3>
+    </a>
+
+    <a href="print" class="button">
+      <img src="https://www.svgrepo.com/show/278296/printer-print.svg" alt="">
+      <h3>
+        Print
+      </h3>
+    </a>
+
+  </div>
+</body>
+
+</html>

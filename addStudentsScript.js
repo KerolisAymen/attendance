@@ -22,6 +22,7 @@ const meetingSchema = new mongoose.Schema({
 const studentSchema = new mongoose.Schema({
   ID: String,
   name: String,
+  englishName : String,
   grade: Number,
   profilepic: String,
   meetings: [
