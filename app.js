@@ -149,6 +149,61 @@ app.get("/attendanceReview",userAuth, async (req, res) => {
   }
 });
 
+app.get("/attendanceReview/:ID",adminAuth, async (req, res) => {
+
+  let ID = req.params.ID ; 
+  console.log(ID); 
+  const profileData = await Student.findOne({ID: ID}).populate(
+    "meetings.meeting"
+  );
+
+
+  if (profileData != undefined) {
+    const allstudents = await Student.find({
+      grade: profileData.grade,
+    }).populate("meetings.meeting");
+    const grapharray = [];
+    await allstudents.forEach(async (student) => {
+      grapharray.push([student.name, await student.gettotalbonus()]);
+    });
+
+    let qrsrc;
+    const apiUrl = "https://api.qrserver.com/v1/create-qr-code/";
+    const params = {
+      size: "300x300",
+      data: ID,
+    };
+
+    await axios
+      .get(apiUrl, { params })
+      .then((response) => {
+        console.log("QR code URL:", response.request.res.responseUrl);
+        qrsrc = response.request.res.responseUrl;
+      })
+      .catch((error) => {
+        console.error("Error:", error.message);
+      });
+
+    console.log(profileData.meetings);
+    const profileData2 = {
+      ID: profileData.ID,
+      name: profileData.name,
+      grade: profileData.grade,
+      meetingsAttended: profileData.meetings.length,
+      meetings: profileData.meetings,
+      profilepic: profileData.profilepic,
+      imgUrl: qrsrc,
+      graph: grapharray,
+    };
+
+    JSON.stringify(profileData2);
+    console.log(profileData2);
+    res.render("profile", { profileData2 });
+  } else {
+    res.send("<h1>this user not found</h1>");
+  }
+});
+
 app.route("/qrpage").get(adminAuth,(req,res)=>{
   res.sendFile(path.join(__dirname, "qrpage.html"));
 })
@@ -188,7 +243,7 @@ app.post("/qrcodepage", adminAuth, async (req, res) => {
 
 app.get("/dashboard",adminAuth, async (req, res) => {
   const users = await Student.find({}); //.populate("meetings.meeting");
-  console.log(users);
+  // console.log(users);
   res.render("dashboard", { users });
 });
 
@@ -227,7 +282,7 @@ app.route("/login").get((req,res)=>{
 
 });
 
-app.get("/print", async (req, res) => {
+app.get("/print",adminAuth, async (req, res) => {
   const users = await Student.find({}); //.populate("meetings.meeting");
   
   res.render("print", { users });

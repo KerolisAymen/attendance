@@ -6,6 +6,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=0" />
   <title>Home Page</title>
   <style>
+
+    @keyframes scrollBackground {
+      from {
+        background-position: 0 0;
+      }
+
+      to {
+        background-position: 100% 0;
+      }
+    }
+    h1 {
+      font-size: 36px;
+      color: #fff;
+      margin-bottom: 30px;
+    }
+
+    
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
@@ -17,19 +34,10 @@
       animation: scrollBackground 30s linear infinite;
     }
 
-    @keyframes scrollBackground {
-      from {
-        background-position: 0 0;
-      }
-
-      to {
-        background-position: 100% 0;
-      }
-    }
 
     .container {
-      margin: 50px;
-      padding: 30px;
+      margin: 1em;
+      padding: 1em;
       border-radius: 10px;
       background-color: rgba(255, 255, 255, 0.3);
 
@@ -38,17 +46,14 @@
       text-align: center;
     }
 
-    h1 {
-      font-size: 36px;
-      color: #fff;
-      margin-bottom: 30px;
-    }
+
 
     .button {
-      width: 250px;
+      font-size: 8px;
+      width: 15em;
+      height: 17em;
       display: inline-block;
       margin: 10px;
-      font-size: 18px;
       text-decoration: none;
       color: #000000;
       background-color: white;
@@ -61,7 +66,7 @@
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       /* Added box shadow */
       overflow: hidden;
-      border-bottom: 3px solid green;
+      border-bottom: 3px solid blue;
 
     }
 
@@ -74,14 +79,9 @@
     }
 
     .button img {
-      width: 100px;
-      /* Adjusted image size */
-      height: 100px;
-      /* Adjusted image size */
+      width: 8em;
       vertical-align: middle;
-      /* Align image vertically */
       margin-right: 10px;
-      /* Added spacing between image and text */
       margin: 10px;
     }
 
@@ -90,10 +90,31 @@
       margin: 0px;
       padding: 20px;
     }
+    /* @media only screen and (max-width :450px) {
+      .button{
+       
+        margin: 5px;
+      }
+      h3{
+        font-size:smaller;
+      }
+      .container {
+      margin: 25px;
+      padding: 10px;
+    
+    }
+
+  } */
   </style>
 </head>
 
 <body>
+
+
+<header>
+
+</header>
+
   <div class="container">
     <h1>اهلا بيك فى فريق كوكب البرية</h1>
 
@@ -117,7 +138,7 @@
       <h3>
         dashboard
       </h3>
-      
+
     </a>
 
     <a href="addnewmeeting" class="button">
