@@ -5,6 +5,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=0" />
   <title>Home Page</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@100..900&family=Noto+Sans+Arabic:wght@100..900&display=swap" rel="stylesheet">
   <style>
 
     @keyframes scrollBackground {
@@ -16,15 +20,15 @@
         background-position: 100% 0;
       }
     }
-    h1 {
-      font-size: 36px;
+    #main-title {
       color: #fff;
-      margin-bottom: 30px;
+      margin: 0px;
     }
 
     
+    
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: "Noto Kufi Arabic"; 
       margin: 0;
       padding: 0;
       overflow-x: hidden;
@@ -32,6 +36,7 @@
       background-size: cover;
       background-attachment: fixed;
       animation: scrollBackground 30s linear infinite;
+      overflow: hidden;
     }
 
 
@@ -53,7 +58,7 @@
       width: 15em;
       height: 17em;
       display: inline-block;
-      margin: 10px;
+      /* margin: 10px; */
       text-decoration: none;
       color: #000000;
       background-color: white;
@@ -110,15 +115,13 @@
 
 <body>
 
-
-<header>
-
-</header>
+  <header id="header"></header>
 
   <div class="container">
-    <h1>اهلا بيك فى فريق كوكب البرية</h1>
+    <h2 id="main-title">اهلا بيك فى فريق كوكب البرية</h2>
 
 
+    
 
     <a href="qrpage" class="button">
       <img src="https://www.svgrepo.com/show/379577/qr-code-scan.svg" alt="">
@@ -156,6 +159,28 @@
     </a>
 
   </div>
+
+
+  <script>
+   
+   async function  fetchHeader() {
+            fetch('header.html') // Fetch the header.html file
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text(); // Return response as text
+                })
+                .then(html => {
+                  console.log(html);
+                    document.getElementById('header').innerHTML = html; // Insert HTML into header element
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+        }
+        fetchHeader(); 
+  </script>
 </body>
 
 </html>

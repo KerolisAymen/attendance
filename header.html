@@ -1,0 +1,36 @@
+<style>
+    header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 0px;
+        background-color: #612d8d;
+        width: auto;
+        padding: 0px;
+        height: 3em;
+        padding: 1em
+    }
+
+    h2 {
+        margin: 0px;
+        color: white;
+    }
+
+    #logout {
+        width: 2em;
+    }
+
+    #logouttext {
+        color: aliceblue;
+    }
+</style>
+
+    <h2>فريق كوكب البرية</h2>
+
+    <div id="button" onclick="
+            {document.cookie = 'token=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;';
+            location.reload() ;}">
+
+        <img src="https://www.svgrepo.com/show/525415/logout-2.svg" id="logout" alt="logout">
+        <div id="logouttext">logout</div>
+    </div>
