@@ -27,6 +27,7 @@ app.use(bodyParser.json());
 
 const {Student , Meeting} = require("./model/User")
 const {register,adminAuth,userAuth } = require("./Auth/auth.js");
+const { decode } = require("punycode");
 
 
 //  (async()=>{
@@ -35,8 +36,15 @@ const {register,adminAuth,userAuth } = require("./Auth/auth.js");
 // }) ()
 
 
-app.get("/", adminAuth ,  (req, res) => {
-  res.sendFile(path.join(__dirname, "home.html"));
+app.get("/", adminAuth ,  async(req, res) => {
+
+  jwt.verify(req.cookies.token, "kero", async(err, decodedToken) => {
+  //  console.log(decodedToken);
+  
+ const user  = await Student.findOne({ID : decodedToken.ID}) ;
+  // console.log(user); 
+  res.render("home",{user})
+})
 });
 
 app.get("/registration", adminAuth,(req, res) => {
