@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <!-- Design by foolishdeveloper.com -->
-    <title>Glassmorphism login Form Tutorial in html css</title>
- 
+    <title>Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=0" />
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
@@ -17,9 +17,17 @@
     box-sizing: border-box;
 }
 body{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  overflow: hidden;
     background-color: #080710;
+
+    height: 100vh ; 
 }
 .background{
+  z-index: 1;
     width: 430px;
     height: 520px;
     position: absolute;
@@ -51,18 +59,18 @@ body{
     bottom: -80px;
 }
 form{
-    height: 520px;
-    width: 400px;
+    height: 25em;
+    width: 25em;
+    z-index: 2;
     background-color: rgba(255,255,255,0.13);
-    position: absolute;
-    transform: translate(-50%,-50%);
     top: 50%;
     left: 50%;
     border-radius: 10px;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(1em);
     border: 2px solid rgba(255,255,255,0.1);
     box-shadow: 0 0 40px rgba(8,7,16,0.6);
-    padding: 50px 35px;
+    padding: 3em 2em; 
+    margin: 2em;
 }
 form *{
     font-family: 'Poppins',sans-serif;
@@ -144,7 +152,7 @@ button{
         <br />
         <h3>Login Here</h3>
 
-        <label for="ID">Username</label>
+        <label for="ID">Enter your ID here</label>
         <input type="text" placeholder="ID" id="username">
 
         <button onclick="login(event)">Log In</button>
@@ -170,7 +178,7 @@ button{
         const data = await response.json();
         if (response.ok) {
           const token = data.token;
-          localStorage.setItem('token', token);
+          // localStorage.setItem('token', token);
           document.cookie = `token=${token};path=/`;
           window.location.href = '/';
           console.log("done")

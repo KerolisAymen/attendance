@@ -13,21 +13,7 @@ const cookieParser = require("cookie-parser") ;
 const jwt = require("jsonwebtoken")
 const secretKey ="kero" ;
 
-// const googleStorage = require('@google-cloud/storage');
-// var serviceAccount = require("./serviceAccountKey.json");
-
-// var admin = require("firebase-admin");
-
-// admin.initializeApp({
-//     credential: admin.credential.cert(serviceAccount),
-//     storageBucket: "gs://attendance-417319.appspot.com"
-// });
-
-// var bucket = admin.storage().bucket();
-
-// bucket.upload(path.join(__dirname,"/beeb.mp3"))
-
-// Set the view engine to use EJS
+app.use(express.static(path.join(__dirname, '/public')));
 
 app.set("view engine", "ejs");
 
@@ -35,7 +21,6 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname,"views"));
 
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname)));
 app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.json());

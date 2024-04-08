@@ -21,8 +21,9 @@
       }
     }
     #main-title {
-      color: #fff;
-      margin: 0px;
+      color: #ffffff;
+      /* margin: 50px; */
+      text-align: center;
     }
 
     
@@ -31,45 +32,53 @@
       font-family: "Noto Kufi Arabic"; 
       margin: 0;
       padding: 0;
-      overflow-x: hidden;
-      background-image: url('https://source.unsplash.com/1920x1080/?scout');
+      /* overflow-x: hidden; */
+      /* background-image: url('https://source.unsplash.com/1920x1080/?scout'); */
+      background-color: rgb(255, 255, 255);
       background-size: cover;
       background-attachment: fixed;
       animation: scrollBackground 30s linear infinite;
-      overflow: hidden;
+      /* overflow: hidden; */
     }
 
 
-    .container {
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
       margin: 1em;
       padding: 1em;
       border-radius: 10px;
-      background-color: rgba(255, 255, 255, 0.3);
-
-      backdrop-filter: blur(10px);
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+      /* position: relative; */
+      margin-top: -10em ;
+      bottom: 10em;
+      /* background-color: rgba(255, 255, 255, 0.3); */
+      /* background-color: white; */
+      /* backdrop-filter: blur(10px); */
+      /* box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); */
       text-align: center;
     }
 
 
 
     .button {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
       font-size: 8px;
+      margin: 0.5em;
       width: 15em;
       height: 17em;
-      display: inline-block;
-      /* margin: 10px; */
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
       text-decoration: none;
       color: #000000;
       background-color: white;
-      /* border: 2px solid transparent; */
-      /* Added border */
+
       border-radius: 5px;
       cursor: pointer;
       transition: all 0.3s ease;
       /* Smooth transition for all properties */
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      /* Added box shadow */
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
       overflow: hidden;
       border-bottom: 3px solid blue;
 
@@ -87,13 +96,18 @@
       width: 8em;
       vertical-align: middle;
       margin-right: 10px;
-      margin: 10px;
+      margin: 10px auto;
     }
 
     h3 {
-      background-color: rgb(126, 221, 126);
-      margin: 0px;
-      padding: 20px;
+      display: flex;
+    background-color: rgb(126, 221, 126);
+    margin: 0px;
+    height: 30%;
+    align-content: center;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
     }
     /* @media only screen and (max-width :450px) {
       .button{
@@ -103,22 +117,67 @@
       h3{
         font-size:smaller;
       }
-      .container {
+      .buttons {
       margin: 25px;
       padding: 10px;
     
     }
 
   } */
+  footer{
+    height: 4em;
+    position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color:#612d8d ;
+  color: white;
+  text-decoration: none;
+  text-align: center;
+  }
+  footer a{
+    color: white;
+    text-decoration: none;
+    margin: 0px;
+    padding: 0px;
+    font-size: smaller;
+  }
+  .image-container {
+        width: auto; /* Adjust the width as needed */
+        height: 200px; /* Adjust the height as needed */
+        overflow: hidden;
+        position: relative;
+        z-index: -1;
+        bottom: 46px;
+    border-radius: 0em 0em 1em 1em;
+    }
+
+    .image-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* This will crop the image */
+      
+   
+    }
+    ol{
+      position: relative;
+      direction: rtl;
+    }
   </style>
 </head>
 
 <body>
 
   <header id="header"></header>
+  <h2 id="main-title">اهلا بيك فى فريق كوكب البرية</h2>
 
-  <div class="container">
-    <h2 id="main-title">اهلا بيك فى فريق كوكب البرية</h2>
+
+
+<div class="image-container">
+  <img src="scout.jpeg" class="background" alt="">
+</div>
+
+  <div class="buttons">
 
 
     
@@ -129,16 +188,17 @@
     </a>
 
 
+    
     <a href="registration" class="button">
       <img src="https://www.svgrepo.com/show/246367/add-user-add.svg" alt="">
-      <h3>
+      <h3 style="background-color: rgb(233, 160, 2); color: rgb(255, 255, 255);">
         Add new user
       </h3>
     </a>
 
     <a href="dashboard" class="button">
       <img src="https://www.svgrepo.com/show/144093/archive.svg" alt="">
-      <h3>
+      <h3 style="background-color: rgb(207, 86, 86); color: rgb(255, 255, 255);">
         dashboard
       </h3>
 
@@ -153,13 +213,45 @@
 
     <a href="print" class="button">
       <img src="https://www.svgrepo.com/show/278296/printer-print.svg" alt="">
-      <h3>
+      <h3 style="background-color: rgb(129, 129, 231); corgb(0, 0, 0)white;">
         Print
       </h3>
     </a>
 
+    
   </div>
 
+
+   <!-- <a href="print" class="button">
+      <img src="https://www.svgrepo.com/show/278296/printer-print.svg" alt="">
+      <h3 style="background-color: rgb(129, 129, 231); corgb(0, 0, 0)white;">
+        Print
+      </h3>
+    </a> -->
+
+    
+    <ol>
+<h4>تعليمات هامة</h4>
+      <li>
+        Laudantium nam necessitatibus ut praesentium repellat, 
+      </li>
+      <li>
+        Lorem ipsum dolor, sit amet consectetur adipisicing elit. 
+      </li>
+      <li>
+        Lorem ipsum dolor, sit amet consectetur adipisicing elit. 
+      </li>
+      <li>Lorem ipsum dolor, sit amet consectetur adipisicing elit. </li>
+      <li>
+        Lorem ipsum dolor, sit amet consectetur adipisicing elit. 
+      </li>
+    </ol>
+
+  <footer>
+    <a href="tel:01229712248">01229712248</a> 
+    <br>
+    <a href="mailto:kerolisaymen456@gmail.com">kerolisaymen456@gmail.com</a>
+  </footer>
 
   <script>
    
