@@ -290,57 +290,57 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-async function fun(username) {
-  const response = await fetch('https://attendance-qn01.onrender.com/login', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ username })
-  });
+// async function fun(username) {
+//   const response = await fetch('https://attendance-qn01.onrender.com/login', {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/json'
+//     },
+//     body: JSON.stringify({ username })
+//   });
 
-  const data = await response.json();
-  if (response.ok) {
-    const token = data.token;
-    // localStorage.setItem('token', token);
-    console.log("done")
-  } else {
-    console.log(data.error);
-    // console.log("error")
-  }
-}
+//   const data = await response.json();
+//   if (response.ok) {
+//     const token = data.token;
+//     // localStorage.setItem('token', token);
+//     console.log("done")
+//   } else {
+//     console.log(data.error);
+//     // console.log("error")
+//   }
+// }
 
-async function testInBatches(start, batchSize, totalRequests, delayBetweenBatches, delayBetweenRequests) {
-  for (let i = start; i < totalRequests; i += batchSize) {
-    const end = Math.min(i + batchSize, totalRequests);
-    const batchResults = await Promise.all(Array.from({ length: end - i }, (_, index) => {
-      const username = (i + index).toString();
-      console.log(i);
-      return fun(username);
+// async function testInBatches(start, batchSize, totalRequests, delayBetweenBatches, delayBetweenRequests) {
+//   for (let i = start; i < totalRequests; i += batchSize) {
+//     const end = Math.min(i + batchSize, totalRequests);
+//     const batchResults = await Promise.all(Array.from({ length: end - i }, (_, index) => {
+//       const username = (i + index).toString();
+//       console.log(i);
+//       return fun(username);
 
-    }));
+//     }));
 
-    batchResults.forEach((result, index) => {
-      const username = (i + index).toString();
-      if (result === "done") {
-        console.log(`${username} worked`);
-      }
-    });
+//     batchResults.forEach((result, index) => {
+//       const username = (i + index).toString();
+//       if (result === "done") {
+//         console.log(`${username} worked`);
+//       }
+//     });
 
-    if (i + batchSize < totalRequests) {
-      console.log(`Waiting ${delayBetweenBatches} ms before the next batch...`);
-      await new Promise(resolve => setTimeout(resolve, delayBetweenBatches));
-    }
-  }
+//     if (i + batchSize < totalRequests) {
+//       console.log(`Waiting ${delayBetweenBatches} ms before the next batch...`);
+//       await new Promise(resolve => setTimeout(resolve, delayBetweenBatches));
+//     }
+//   }
   
-}
+// }
 
-(async () => {
-  const start = 29030;
-  const batchSize = 200; // Number of requests in each batch
-  const totalRequests = 100000;
-  const delayBetweenBatches = 500; // milliseconds (adjust as needed)
-  const delayBetweenRequests = 10; // milliseconds (adjust as needed)
+// (async () => {
+//   const start = 29030;
+//   const batchSize = 200; // Number of requests in each batch
+//   const totalRequests = 100000;
+//   const delayBetweenBatches = 500; // milliseconds (adjust as needed)
+//   const delayBetweenRequests = 10; // milliseconds (adjust as needed)
 
-  await testInBatches(start, batchSize, totalRequests, delayBetweenBatches, delayBetweenRequests);
-})();
+//   await testInBatches(start, batchSize, totalRequests, delayBetweenBatches, delayBetweenRequests);
+// })();
