@@ -13,40 +13,8 @@ const fs = require('fs');
 //     console.log("Error connecting to MongoDB:", error);
 //   });
 
-
-const meetingSchema = new mongoose.Schema({
-  name: String,
-  date: Date,
-});
-
-const studentSchema = new mongoose.Schema({
-  ID: String,
-  name: String,
-  englishName : String,
-  grade: Number,
-  profilepic: String,
-  meetings: [
-    {
-      _id: false,
-      meeting: { type: mongoose.Schema.Types.ObjectId, ref: "Meeting" },
-      bonusandminus: [Number], // Array of strings for bonus and minus data
-    },
-  ],
-});
-
-studentSchema.methods.gettotalbonus = async function () {
-  let bonus = 0;
-  this.meetings.forEach((element) => {
-    if (element.meeting.name == "تسبحة") bonus += 50;
-    else bonus += 30;
-  });
-  console.log(bonus);
-  return bonus;
-};
-
-const Student = mongoose.model("Student", studentSchema);
-const Meeting = mongoose.model("Meeting", meetingSchema);
-const filePath = 'names.txt';
+const {Student , Meeting} = require("./model/User")
+// const filePath = 'names.txt';
 
 fs.readFile(filePath, 'utf8', (err, data) => {
   if (err) {

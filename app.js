@@ -8,93 +8,86 @@ const axios = require("axios");
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const ejs = require("ejs");
-const fs = require('fs');
-const cookieParser = require("cookie-parser") ; 
-const jwt = require("jsonwebtoken")
-const secretKey ="kero" ;
+const fs = require("fs");
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
+const secretKey = "kero";
 
-app.use(express.static(path.join(__dirname, '/public')));
+app.use(express.static(path.join(__dirname, "/public")));
 
 app.set("view engine", "ejs");
 
 // Set the directory for EJS templates (optional if you're using a single folder)
-app.set("views", path.join(__dirname,"views"));
+app.set("views", path.join(__dirname, "views"));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.json());
 
-const {Student , Meeting} = require("./model/User")
-const {register,adminAuth,userAuth } = require("./Auth/auth.js");
+const { Student, Meeting } = require("./model/User");
+const { register, adminAuth, userAuth } = require("./Auth/auth.js");
 const { decode } = require("punycode");
 
-
 //  (async()=>{
-//   const temp = await Student.find({}); 
+//   const temp = await Student.find({});
 //   console.log(temp[5]);
 // }) ()
 
+app.get("/", adminAuth, async (req, res) => {
+  jwt.verify(req.cookies.token, "kero", async (err, decodedToken) => {
+    //  console.log(decodedToken);
 
-app.get("/", adminAuth ,  async(req, res) => {
-
-  jwt.verify(req.cookies.token, "kero", async(err, decodedToken) => {
-  //  console.log(decodedToken);
-  
- const user  = await Student.findOne({ID : decodedToken.ID}) ;
-  // console.log(user); 
-  res.render("home",{user})
-})
+    const user = await Student.findOne({ ID: decodedToken.ID });
+    // console.log(user);
+    res.render("home", { user });
+  });
 });
 
-app.get("/registration", adminAuth,(req, res) => {
+app.get("/registration", adminAuth, (req, res) => {
   res.sendFile(path.join(__dirname, "registration.html"));
 });
 
-app.post("/submit",upload.single("avatar"),
-  async (req, res, next) => {
-    const username = req.body.username;
+app.post("/submit", upload.single("avatar"), async (req, res, next) => {
+  const username = req.body.username;
 
-    const grade = req.body.grade;
-    let newuserid = Math.floor(Math.random() * 99999 + 10000);
-    let newStudent = new Student({
-      ID: newuserid,
-      name: username,
-      profilepic: req.body.picurl,
-      grade: grade,
-    });
+  const grade = req.body.grade;
+  let newuserid = Math.floor(Math.random() * 99999 + 10000);
+  let newStudent = new Student({
+    ID: newuserid,
+    name: username,
+    profilepic: req.body.picurl,
+    grade: grade,
+  });
 
-    if ((await Student.findOne({ name: req.body.username })) != undefined) {
-      console.log(await Student.findOne({ name: req.body.username }));
-      res.send("<h1>تم التسجيل من قبل</h1>");
-    } else {
-      newStudent
-        .save()
-        .then((s) => {
-          console.log(s);
-          res.send(
-            `<h1>تم التسجيل بنجاح</h1> <h2>your id :</h2><h2> ${newuserid} </h2>`
-          );
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
+  if ((await Student.findOne({ name: req.body.username })) != undefined) {
+    console.log(await Student.findOne({ name: req.body.username }));
+    res.send("<h1>تم التسجيل من قبل</h1>");
+  } else {
+    newStudent
+      .save()
+      .then((s) => {
+        console.log(s);
+        res.send(
+          `<h1>تم التسجيل بنجاح</h1> <h2>your id :</h2><h2> ${newuserid} </h2>`
+        );
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
-);
+});
 
-app.get("/attendanceReview",userAuth, async (req, res) => {
-
-  let ID ; 
-  const token = req.cookies.token ; 
-  if (!token) return ; 
-  jwt.verify(token, "kero" , (err ,decodedToken)=>{
-    ID = decodedToken.ID  ; 
-  })
-  const profileData = await Student.findOne({ ID: ID}).populate(
+app.get("/attendanceReview", userAuth, async (req, res) => {
+  let ID;
+  const token = req.cookies.token;
+  if (!token) return;
+  jwt.verify(token, "kero", (err, decodedToken) => {
+    ID = decodedToken.ID;
+  });
+  const profileData = await Student.findOne({ ID: ID }).populate(
     "meetings.meeting"
   );
-
 
   if (profileData != undefined) {
     const allstudents = await Student.find({
@@ -142,14 +135,12 @@ app.get("/attendanceReview",userAuth, async (req, res) => {
   }
 });
 
-app.get("/attendanceReview/:ID",adminAuth, async (req, res) => {
-
-  let ID = req.params.ID ; 
-  console.log(ID); 
-  const profileData = await Student.findOne({ID: ID}).populate(
+app.get("/attendanceReview/:ID", adminAuth, async (req, res) => {
+  let ID = req.params.ID;
+  console.log(ID);
+  const profileData = await Student.findOne({ ID: ID }).populate(
     "meetings.meeting"
   );
-
 
   if (profileData != undefined) {
     const allstudents = await Student.find({
@@ -197,9 +188,9 @@ app.get("/attendanceReview/:ID",adminAuth, async (req, res) => {
   }
 });
 
-app.route("/qrpage").get(adminAuth,(req,res)=>{
+app.route("/qrpage").get(adminAuth, (req, res) => {
   res.sendFile(path.join(__dirname, "qrpage.html"));
-})
+});
 app.post("/qrcodepage", adminAuth, async (req, res) => {
   console.log(req.body);
   const name = await Student.findOne({ ID: req.body.decodeText });
@@ -234,16 +225,16 @@ app.post("/qrcodepage", adminAuth, async (req, res) => {
   }
 });
 
-app.get("/dashboard",adminAuth, async (req, res) => {
+app.get("/dashboard", adminAuth, async (req, res) => {
   const users = await Student.find({}); //.populate("meetings.meeting");
   // console.log(users);
   res.render("dashboard", { users });
 });
 
-app.get("/addnewmeeting" ,adminAuth, (req,res)=>{
+app.get("/addnewmeeting", adminAuth, (req, res) => {
   res.sendFile(path.join(__dirname, "addnewmeeting.html"));
-})
-app.get("/getmeetings",adminAuth, async (req, res) => {
+});
+app.get("/getmeetings", adminAuth, async (req, res) => {
   res.send(await Meeting.find({}));
 });
 app.post("/putmeetings", adminAuth, async (req, res) => {
@@ -257,27 +248,29 @@ app.post("/putmeetings", adminAuth, async (req, res) => {
   });
 });
 
-app.route("/login").get((req,res)=>{
-  res.sendFile(path.join(__dirname,"login.html"))
-}).post( async (req, res) => {
-  const username= req.body.username;
-  // console.log(username); 
- const user = await Student.findOne({ID : username})
- console.log(user); 
-  if (user) {
-    // Generate token
-    const token = jwt.sign({ ID: user.ID , role: user.role}, secretKey);
-    // res.cookie('token', token, { httpOnly: false });
-    res.json({ token });
-  } else {
-    res.status(401).json({ error: 'Invalid username or password' });
-  }
+app
+  .route("/login")
+  .get((req, res) => {
+    res.sendFile(path.join(__dirname, "login.html"));
+  })
+  .post(async (req, res) => {
+    const username = req.body.username;
+    // console.log(username);
+    const user = await Student.findOne({ ID: username });
+    console.log(user);
+    if (user) {
+      // Generate token
+      const token = jwt.sign({ ID: user.ID, role: user.role }, secretKey);
+      // res.cookie('token', token, { httpOnly: false });
+      res.json({ token });
+    } else {
+      res.status(401).json({ error: "Invalid username or password" });
+    }
+  });
 
-});
-
-app.get("/print",adminAuth, async (req, res) => {
+app.get("/print", adminAuth, async (req, res) => {
   const users = await Student.find({}); //.populate("meetings.meeting");
-  
+
   res.render("print", { users });
 });
 mongoose
@@ -296,3 +289,58 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+async function fun(username) {
+  const response = await fetch('https://attendance-qn01.onrender.com/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ username })
+  });
+
+  const data = await response.json();
+  if (response.ok) {
+    const token = data.token;
+    // localStorage.setItem('token', token);
+    console.log("done")
+  } else {
+    console.log(data.error);
+    // console.log("error")
+  }
+}
+
+async function testInBatches(start, batchSize, totalRequests, delayBetweenBatches, delayBetweenRequests) {
+  for (let i = start; i < totalRequests; i += batchSize) {
+    const end = Math.min(i + batchSize, totalRequests);
+    const batchResults = await Promise.all(Array.from({ length: end - i }, (_, index) => {
+      const username = (i + index).toString();
+      console.log(i);
+      return fun(username);
+
+    }));
+
+    batchResults.forEach((result, index) => {
+      const username = (i + index).toString();
+      if (result === "done") {
+        console.log(`${username} worked`);
+      }
+    });
+
+    if (i + batchSize < totalRequests) {
+      console.log(`Waiting ${delayBetweenBatches} ms before the next batch...`);
+      await new Promise(resolve => setTimeout(resolve, delayBetweenBatches));
+    }
+  }
+  
+}
+
+(async () => {
+  const start = 29030;
+  const batchSize = 200; // Number of requests in each batch
+  const totalRequests = 100000;
+  const delayBetweenBatches = 500; // milliseconds (adjust as needed)
+  const delayBetweenRequests = 10; // milliseconds (adjust as needed)
+
+  await testInBatches(start, batchSize, totalRequests, delayBetweenBatches, delayBetweenRequests);
+})();

@@ -70,9 +70,10 @@ exports.userAuth = (req, res, next) => {
       }
     })
   } else {
-    return res
-      .status(401)
-      .json({ message: "Not authorized, token not available" })
+    res.redirect('/login');
+    // return res
+    //   .status(401)
+    //   .json({ message: "Not authorized, token not available" })
   }
 }
 

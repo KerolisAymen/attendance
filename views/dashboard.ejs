@@ -3,6 +3,8 @@
 <html lang="en">
 
 <head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3366182886185599"
+     crossorigin="anonymous"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=0" />
   <title>User List</title>
@@ -47,11 +49,58 @@
     .user-card:hover {
       background-color: #0056b3;
     }
+
+    /* Style for search container */
+.search-container {
+  margin-bottom: 20px;
+}
+
+.search-container input[type="text"] {
+  padding: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+/* Style for radio container */
+.radio-container {
+  margin-bottom: 20px;
+}
+
+.radio-container input[type="radio"] {
+  margin-right: 10px;
+}
+
+.radio-container label {
+  font-size: 16px;
+  margin-right: 10px;
+}
+
   </style>
 </head>
 
 <body>
   <h1>User List</h1>
+
+  <div class="search-container">
+    <input type="text" id="searchInput" oninput="filterUsers()" placeholder="Search by name...">
+  </div>
+
+  <!-- Radio options for grades -->
+  <div class="radio-container">
+    <input type="radio" id="grade1" name="grade" value="1" onclick="filterUsers()">
+    <label for="grade1">1</label>
+      <br>
+    <input type="radio" id="grade2" name="grade" value="2" onclick="filterUsers()"> 2 <br>
+    <input type="radio" id="grade3" name="grade" value="3" onclick="filterUsers()"> 3 <br>
+    <input type="radio" id="grade4" name="grade" value="4" onclick="filterUsers()"> 4 <br>
+    <input type="radio" id="grade5" name="grade" value="5" onclick="filterUsers()"> 5 <br>
+    <input type="radio" id="grade6" name="grade" value="6" onclick="filterUsers()"> 6 <br>
+    <!-- Add more radio buttons for other grades if needed -->
+  </div>
+
   <div class="grid-container">
     <% users.forEach(user=> { %>
       <div class="user-card" onclick="openprofile('<%= user.ID %>')">
@@ -71,6 +120,9 @@
           <div>
             <%= user.name %>
           </div>
+          <div class="grade">
+            <%= user.grade %>
+          </div>
           <div>
             <%= user.meetings.length %>
           </div>
@@ -78,7 +130,27 @@
       </div>
       <% }); %>
   </div>
+<script>
+    function filterUsers() {
+      var input, filter, grid, userCards, txtValue, grade;
+      input = document.getElementById("searchInput");
+      filter = input.value.toUpperCase();
+      grid = document.getElementsByClassName("grid-container")[0];
+      userCards = grid.getElementsByClassName("user-card");
+      grade = document.querySelector('input[name="grade"]:checked')?.value;
 
+      // Loop through all user cards, hide those that don't match the search input and grade
+      for (var i = 0; i < userCards.length; i++) {
+        
+        txtValue = userCards[i].textContent || userCards[i].innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1 && (!grade || userCards[i].getElementsByClassName("grade")[0].innerText.toUpperCase().includes(grade))) {
+          userCards[i].style.display = "";
+        } else {
+          userCards[i].style.display = "none";
+        }
+      }
+    }
+</script>
   <script>
     function openprofile(name){
       window.location.href = "attendanceReview/"+encodeURI(name);
