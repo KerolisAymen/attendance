@@ -183,9 +183,11 @@ button{
       console.log(username);
         const response = await fetch('/login', {
           method: 'POST',
+          credentials: "include",
           headers: {
             'Content-Type': 'application/json'
           },
+          credentials: 'include', // Include cookies in the request
           body: JSON.stringify({ username })
         });
   
@@ -193,7 +195,7 @@ button{
         if (response.ok) {
           const token = data.token;
           // localStorage.setItem('token', token);
-          document.cookie = `token=${token};path=/`;
+        
           window.location.href = '/';
           console.log("done")
         } else {

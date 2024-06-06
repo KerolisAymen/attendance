@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=0" />
+    <title>Registration Page</title>
+    <link rel="stylesheet" href="/registration.css">
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <form class="registration-form" method="post" enctype="multipart/form-data" action="/edituser">
+            <h2>Edit User</h2>
+            <div class="form-group">
+                <label for="ID">ID</label>
+                <input type="text" id="ID" name="ID" required>
+            </div>
+            <select name="name" id="name">
+                <option disabled selected value> -- select a name -- </option>
+            </select>
+            <div>
+                <div>
+                    <label for="grade1">اولى</label>
+                    <input type="radio" id="grade1" class="grade" value="1" name="grade" required>
+                </div>
+                <div>
+                    <label for="grade2">تانيه</label>
+                    <input type="radio" id="grade2" class="grade" value="2" name="grade" required>
+                </div>
+                <div>
+                    <label for="grade3">تالته</label>
+                    <input type="radio" id="grade3" class="grade" value="3" name="grade" required>
+                </div>
+                <div>
+                    <label for="grade4">رابعه</label>
+                    <input type="radio" id="grade4" class="grade" value="4" name="grade" required>
+                </div>
+                <div>
+                    <label for="grade5">خامسة</label>
+                    <input type="radio" id="grade5" class="grade" value="5" name="grade" required>
+                </div>
+                <div>
+                    <label for="grade6">سادسه</label>
+                    <input type="radio" id="grade6" class="grade" value="6" name="grade" required>
+                </div>
+            </div>
+            <label for="avatar">Select a file or capture an image:</label>
+            <input type="file" id="fileInput" name="avatar" accept="image/*">
+            <input type="text" name="picurl" id="picurl" style="display: none;" required>
+            <button type="button" id="registerButton">Register</button>
+            <div id="progressBarContainer">
+                <div id="progressBar" style="background-color: blueviolet; border-radius: 30px; margin: 20px 0px;"></div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        fetch("/users")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+
+                const slctbox = document.getElementById("name");
+
+                data.forEach(element => {
+                    const option = document.createElement("option");
+                    option.value = element.ID; // Assuming 'element' has an 'ID' property
+                    option.textContent = element.name; // Assuming 'element' has a 'name' property
+                    slctbox.appendChild(option);
+                });
+
+                slctbox.addEventListener('change', (event) => {
+                    const selectedValue = event.target.value;
+                    console.log('Selected value:', selectedValue);
+                    const idInput = document.getElementById("ID");
+                    const selectedUser = data.find(user => user.ID === selectedValue);
+                    if (selectedUser) {
+                        idInput.value = selectedUser.ID;
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBDr6xNYgScGXp3J_-SDle7fs-KgidwNKg",
+            authDomain: "attendance-9e718.firebaseapp.com",
+            projectId: "attendance-9e718",
+            storageBucket: "attendance-9e718.appspot.com",
+            messagingSenderId: "531422046441",
+            appId: "1:531422046441:web:613767e5b0cfcb044fe878",
+            measurementId: "G-PNMZ70MLFN"
+        };
+
+        const app = firebase.initializeApp(firebaseConfig);
+        const storage = firebase.storage();
+
+        const registerButton = document.getElementById('registerButton');
+
+        registerButton.addEventListener("click", function (event) {
+            const fileInput = document.getElementById("fileInput");
+            const name = document.getElementById("name").value;
+            const file = fileInput.files[0]; // Get the selected file
+
+            if (!file) {
+                document.getElementById("picurl").removeAttribute("required");
+                document.querySelector(".registration-form").submit();
+                return;
+            }
+
+            const storageRef = storage.ref().child("myimages");
+            const folderRef = storageRef.child(name + Date.now());
+
+            const progressBar = document.getElementById("progressBar");
+
+            progressBar.style.width = '0%';
+            progressBar.style.height = '50px';
+            const uploadTask = folderRef.put(file);
+
+            uploadTask.on('state_changed',
+                (snapshot) => {
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    progressBar.style.width = progress + '%';
+                },
+                (error) => {
+                    console.error('Upload failed:', error);
+                },
+                () => {
+                    console.log('Upload complete!');
+                    folderRef.getDownloadURL().then((url) => {
+                        console.log('File download URL:', url);
+                        document.getElementById("picurl").value = url;
+                        document.querySelector(".registration-form").submit();
+                    }).catch((error) => {
+                        console.error('Error getting download URL:', error);
+                    });
+                }
+            );
+        });
+    </script>
+</body>
+
+</html>

@@ -12,11 +12,12 @@ const fs = require("fs");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
 const secretKey = "kero";
+const cors = require('cors');
 
 app.use(express.static(path.join(__dirname, "/public")));
 
 app.set("view engine", "ejs");
-
+//app.use(cors());
 // Set the directory for EJS templates (optional if you're using a single folder)
 app.set("views", path.join(__dirname, "views"));
 
@@ -84,6 +85,33 @@ app.post("/submit", upload.single("avatar"), async (req, res, next) => {
       });
   }
 });
+
+
+
+app.post("/edituser", upload.single("avatar"), async (req, res, next) => {
+  const id = req.body.ID;
+  const picUrl = req.body.picurl;
+  
+  try {
+    // Find the user by ID
+    let user = await Student.findOne({ ID: id });
+    
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    // Update the user's profile picture URL
+    user.profilepic = picUrl;
+
+    // Save the updated user
+    await user.save();
+
+    res.send("User profile updated successfully");
+  } catch (error) {
+    next(error);
+  }
+});
+
 
 app.get("/attendanceReview", userAuth, async (req, res) => {
   let ID;
@@ -255,25 +283,47 @@ app.post("/putmeetings", adminAuth, async (req, res) => {
   });
 });
 
-app
-  .route("/login")
+app.route("/login")
   .get((req, res) => {
     res.sendFile(path.join(__dirname, "login.html"));
   })
   .post(async (req, res) => {
     const username = req.body.username;
-    // console.log(username);
     const user = await Student.findOne({ ID: username });
     console.log(user);
     if (user) {
       // Generate token
       const token = jwt.sign({ ID: user.ID, role: user.role }, secretKey);
-      // res.cookie('token', token, { httpOnly: false });
-      res.json({ token });
+
+      // Correctly set the cookie
+      res.cookie('token', token, {
+       // httpOnly: true, // Cookie is accessible only by the web server
+        secure: process.env.NODE_ENV === 'production', // Cookie is only sent over HTTPS
+        sameSite: 'Strict', // Helps mitigate CSRF attacks
+      });
+      
+      res.json({ message: "Login successful" });
     } else {
       res.status(401).json({ error: "Invalid username or password" });
     }
   });
+
+
+
+
+
+app.get("/edit" ,adminAuth , (req,res)=>{
+  res.sendFile(path.join(__dirname,"edit.html")) ; 
+})
+
+app.get("/users" , adminAuth ,async(req,res)=>{
+
+  const users = await Student.find({});
+  res.json(users); 
+})
+
+
+
 
 app.get("/print", adminAuth, async (req, res) => {
   const users = await Student.find({}); //.populate("meetings.meeting");
