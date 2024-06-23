@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -9,6 +9,29 @@
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-storage.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+    <style>
+        .form-group{
+            position: relative;
+        }
+        .suggestions {
+            border: 1px solid #ccc;
+            max-height: 150px;
+            overflow-y: auto;
+            position: absolute;
+            background-color: white;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .suggestion {
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .suggestion:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
 </head>
 
 <body>
@@ -19,9 +42,11 @@
                 <label for="ID">ID</label>
                 <input type="text" id="ID" name="ID" required>
             </div>
-            <select name="name" id="name">
-                <option disabled selected value> -- select a name -- </option>
-            </select>
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" autocomplete="off">
+                <div id="suggestions" class="suggestions"></div>
+            </div>
             <div>
                 <div>
                     <label for="grade1">اولى</label>
@@ -67,24 +92,26 @@
                 return response.json();
             })
             .then(data => {
-                console.log(data);
+                const nameInput = document.getElementById("name");
+                const suggestionsBox = document.getElementById("suggestions");
 
-                const slctbox = document.getElementById("name");
+                nameInput.addEventListener('input', function () {
+                    const input = this.value.toLowerCase();
+                    suggestionsBox.innerHTML = '';
 
-                data.forEach(element => {
-                    const option = document.createElement("option");
-                    option.value = element.ID; // Assuming 'element' has an 'ID' property
-                    option.textContent = element.name; // Assuming 'element' has a 'name' property
-                    slctbox.appendChild(option);
-                });
-
-                slctbox.addEventListener('change', (event) => {
-                    const selectedValue = event.target.value;
-                    console.log('Selected value:', selectedValue);
-                    const idInput = document.getElementById("ID");
-                    const selectedUser = data.find(user => user.ID === selectedValue);
-                    if (selectedUser) {
-                        idInput.value = selectedUser.ID;
+                    if (input) {
+                        const filteredUsers = data.filter(user => user.name.toLowerCase().includes(input));
+                        filteredUsers.forEach(user => {
+                            const div = document.createElement('div');
+                            div.classList.add('suggestion');
+                            div.textContent = user.name;
+                            div.addEventListener('click', function () {
+                                nameInput.value = user.name;
+                                document.getElementById("ID").value = user.ID;
+                                suggestionsBox.innerHTML = '';
+                            });
+                            suggestionsBox.appendChild(div);
+                        });
                     }
                 });
             })
@@ -141,6 +168,203 @@
                         console.log('File download URL:', url);
                         document.getElementById("picurl").value = url;
                         document.querySelector(".registration-form").submit();
+                    }).catch((error) => {
+                        console.error('Error getting download URL:', error);
+                    });
+                }
+            );
+        });
+    </script>
+</body>
+
+</html> -->
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=0" />
+    <title>Registration and Edit Page</title>
+    <link rel="stylesheet" href="/registration.css">
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+    <style>
+        .form-group {
+            position: relative;
+        }
+
+        .suggestions {
+            border: 1px solid #ccc;
+            max-height: 150px;
+            overflow-y: auto;
+            position: absolute;
+            background-color: white;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .suggestion {
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .suggestion:hover {
+            background-color: #f0f0f0;
+        }
+
+        #progressBar {
+            background-color: blueviolet;
+            border-radius: 30px;
+            margin: 20px 0px;
+            height: 50px;
+            width: 0%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <form class="registration-form" id="userForm" method="post" enctype="multipart/form-data" action="/submit">
+            <h2 id="formTitle">Register</h2>
+            <div class="form-group">
+                <label for="ID">ID</label>
+                <input type="text" id="ID" name="ID">
+            </div>
+            <div class="form-group">
+                <label for="username">Name</label>
+                <input type="text" id="username" name="username" autocomplete="off" required>
+                <div id="suggestions" class="suggestions"></div>
+            </div>
+            <div>
+                <label for="grade1">اولى</label>
+                <input type="radio" id="grade1" class="grade" value="1" name="grade" required>
+            </div>
+            <div>
+                <label for="grade2">تانيه</label>
+                <input type="radio" id="grade2" class="grade" value="2" name="grade" required>
+            </div>
+            <div>
+                <label for="grade3">تالته</label>
+                <input type="radio" id="grade3" class="grade" value="3" name="grade" required>
+            </div>
+            <div>
+                <label for="grade4">رابعه</label>
+                <input type="radio" id="grade4" class="grade" value="4" name="grade" required>
+            </div>
+            <div>
+                <label for="grade5">خامسة</label>
+                <input type="radio" id="grade5" class="grade" value="5" name="grade" required>
+            </div>
+            <div>
+                <label for="grade6">سادسه</label>
+                <input type="radio" id="grade6" class="grade" value="6" name="grade" required>
+            </div>
+
+            <label for="avatar">Select a file or capture an image:</label>
+            <input type="file" id="fileInput" name="avatar" accept="image/*">
+            <input type="text" name="picurl" id="picurl" style="display: none;">
+            <button type="button" id="submitButton">Submit</button>
+            <div id="progressBarContainer">
+                <div id="progressBar"></div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBDr6xNYgScGXp3J_-SDle7fs-KgidwNKg",
+            authDomain: "attendance-9e718.firebaseapp.com",
+            projectId: "attendance-9e718",
+            storageBucket: "attendance-9e718.appspot.com",
+            messagingSenderId: "531422046441",
+            appId: "1:531422046441:web:613767e5b0cfcb044fe878",
+            measurementId: "G-PNMZ70MLFN"
+        };
+
+        const app = firebase.initializeApp(firebaseConfig);
+        const storage = firebase.storage();
+
+        const form = document.getElementById('userForm');
+        const submitButton = document.getElementById('submitButton');
+        const formTitle = document.getElementById('formTitle');
+        const idInput = document.getElementById('ID');
+        const usernameInput = document.getElementById('username');
+        const fileInput = document.getElementById('fileInput');
+        const picurlInput = document.getElementById('picurl');
+        const progressBar = document.getElementById('progressBar');
+        const suggestionsBox = document.getElementById('suggestions');
+
+        fetch("/users")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                usernameInput.addEventListener('input', function () {
+                    const input = this.value.toLowerCase();
+                    suggestionsBox.innerHTML = '';
+
+                    if (input) {
+                        const filteredUsers = data.filter(user => user.name.toLowerCase().includes(input));
+                        filteredUsers.forEach(user => {
+                            const div = document.createElement('div');
+                            div.classList.add('suggestion');
+                            div.textContent = user.name;
+                            div.addEventListener('click', function () {
+                                usernameInput.value = user.name;
+                                idInput.value = user.ID;
+                                suggestionsBox.innerHTML = '';
+                                formTitle.textContent = 'Edit User';
+                                form.action = '/edituser';
+                            });
+                            suggestionsBox.appendChild(div);
+                        });
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+
+        submitButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            const file = fileInput.files[0];
+            const name = usernameInput.value;
+
+            if (!file) {
+                picurlInput.removeAttribute("required");
+                form.submit();
+                return;
+            }
+
+            const storageRef = storage.ref().child("myimages");
+            const folderRef = storageRef.child(name + Date.now());
+
+            progressBar.style.width = '0%';
+
+            const uploadTask = folderRef.put(file);
+
+            uploadTask.on('state_changed',
+                (snapshot) => {
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    progressBar.style.width = progress + '%';
+                },
+                (error) => {
+                    console.error('Upload failed:', error);
+                },
+                () => {
+                    folderRef.getDownloadURL().then((url) => {
+                        picurlInput.value = url;
+                        form.submit();
                     }).catch((error) => {
                         console.error('Error getting download URL:', error);
                     });
