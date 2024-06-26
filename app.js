@@ -233,14 +233,19 @@ app.post("/qrcodepage", adminAuth, async (req, res) => {
   const newdata = await {
     meeting: meeting1.id,
   };
-  const arr = await name.meetings.filter(
-    (object) => object.meeting.ObjectId === meeting1.id
-  );
+  // const arr = await name.meetings.filter(
+  //   (object) => object.meeting.ObjectId === meeting1.id
+  // );
   // console.log(name);
   // console.log(name.meetings[0].meeting.toString());
   // console.log(meeting1.id);
   // console.log(arr);
-  if (
+  if (name == undefined){
+    res.send({ message: "not in system" });
+  }else{
+
+  
+  if ( 
     (await name.meetings.filter(
       (object) => object.meeting.toString() === meeting1.id
     ).length) == 0
@@ -258,6 +263,7 @@ app.post("/qrcodepage", adminAuth, async (req, res) => {
   } else {
     res.send({ message: "saved before" });
   }
+}
 });
 
 app.get("/dashboard", adminAuth, async (req, res) => {
@@ -346,6 +352,28 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // async function fun(username) {
 //   const response = await fetch('https://attendance-qn01.onrender.com/login', {
