@@ -18,12 +18,20 @@ domReady(function () {
   function onScanSuccess(decodeText, decodeResult) {
 
 
-
-
+    console.log(typeof(decodeText)); 
+    let s="" ; 
+    for (let i = 0;i<decodeText.length ; i++){
+      if (decodeText[i]!= ' ' && decodeText[i]!= '\n'){
+        s+= decodeText[i];
+      }
+    }
+    decodeText = s ; 
+    console.log(s); 
 
     if (meetingselect.value != "") {
 		var beepSound = document.getElementById("beep");
 		beepSound.play();
+    
       fetch("/qrcodepage", {
         method: "POST",
         headers: {

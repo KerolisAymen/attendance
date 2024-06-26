@@ -15,11 +15,7 @@
     <div class="usercard">
 
       <div class="img-qr">
-        <img src=" 
-                
-                    https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=
-    
-                    <%=user.ID%>" alt="qrcodepicture">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=<%=user.ID%>" alt="qrcodepicture">
 
 
         <img src=" 
@@ -63,7 +59,7 @@
   </div>
   <style>
     img {
-      height: 4.5cm;
+      height: 4.3cm;
     }
 
     .container {
@@ -85,11 +81,11 @@
       display: block;
       flex-direction: row;
       align-items: center;
-      margin: 0.1cm;
-      width: 8.56cm;
-      height: 5.398cm;
+      /* margin: 0.5cm; */
+      width: 9cm;
+      height:5.5cm;
       overflow: hidden;
-      border: solid 0.03cm black;
+      /* border: dashed 0.001cm black; */
       padding: 0.5cm;
 
 
@@ -98,6 +94,10 @@
     h3 ,h2 {
       padding: 0cm;
       margin: 0cm;
+    }
+    body ,html{
+      margin: 0px;
+      padding: 0px;
     }
   </style>
 </body>
