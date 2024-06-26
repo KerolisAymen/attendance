@@ -49,7 +49,9 @@ domReady(function () {
           return response.json();
         })
         .then((data) => {
-          alert(decodeText + " " + data.message);
+          displayMessage(decodeText + " " + data.message) ;
+          beepSound.play();
+        //  alert(decodeText + " " + data.message);
         })
         .catch((error) => {
           console.error("There was a problem with the fetch operation:", error);
@@ -89,3 +91,28 @@ fetch("/getmeetings")
   .catch((error) => {
     console.log(error);
   });
+
+
+
+  function displayMessage(message) {
+    let messageDiv = document.getElementById("message-div");
+    if (!messageDiv) {
+      messageDiv = document.createElement("div");
+      messageDiv.id = "message-div";
+      document.body.appendChild(messageDiv);
+    }
+    messageDiv.innerHTML = message;
+    messageDiv.style.position = "fixed";
+    messageDiv.style.top = "0";
+    messageDiv.style.left = "0";
+    messageDiv.style.width = "100%";
+    messageDiv.style.backgroundColor = "green";
+    messageDiv.style.color = "white";
+    messageDiv.style.padding = "10px";
+    messageDiv.style.textAlign = "center";
+    messageDiv.style.zIndex = "1000";
+     messageDiv.style.display = "block"; 
+    setTimeout(() => {
+      messageDiv.style.display = "none";
+    }, 3000); // Hide after 3 seconds
+  }
