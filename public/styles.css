@@ -104,4 +104,7 @@ video {
   select:focus {
 	outline: none;
 	border-color: #007bff;
-  }
+  }/* styles.css */
+#my-qr-reader.inverted video {
+    transform: scaleX(-1);
+}
