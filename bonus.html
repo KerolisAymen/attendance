@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan QR Codes</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .qr-reader {
+            width: 100%;
+            height: auto;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .inverted .qr-reader video {
+            transform: scaleX(-1);
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .button-container button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .button-container button:hover {
+            background-color: #45a049;
+        }
+
+        .form-container {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .form-container .field {
+            margin-bottom: 10px;
+        }
+
+        .form-container label {
+            font-weight: bold;
+        }
+
+        .form-container input[type="text"],
+        .form-container input[type="number"],
+        .form-container textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .form-container button[type="submit"] {
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .form-container button[type="submit"]:hover {
+            background-color: #005f6b;
+        }
+
+        .message {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Scan QR Codes</h1>
+        <div class="section">
+            <div class="qr-reader" id="my-qr-reader"></div>
+            <div class="button-container">
+                <button id="invert-button">Invert Camera</button>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <form id="qr-form" action="/addbonusandminus" method="post">
+                <div class="field">
+                    <label for="id">ID</label><br>
+                    <input type="text" id="id" name="ID" required>
+                </div><br>
+
+                <div class="field">
+                    <label for="bonusamount">Bonus Amount</label><br>
+                    <input type="number" id="bonusamount" name="bonus" required>
+                </div><br>
+
+                <div class="field">
+                    <label for="title">Title</label><br>
+                    <input type="text" id="title" name="title" readonly>
+                </div><br>
+
+                <div class="field">
+                    <label for="description">Description</label><br>
+                    <textarea id="description" name="description"></textarea>
+                </div><br>
+
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+
+        <div id="message" class="message" style="display: none;"></div>
+    </div>
+
+    <audio id="beep" src="/beeb.mp3"></audio>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+
+
+    <script>
+
+        document.getElementById("bonusamount").addEventListener("input", () => {
+            let number = Number(document.getElementById("bonusamount").value)
+            console.log(number)
+            if (number > 0) {
+                document.getElementById("title").value = "Bonus";
+            }
+            else {
+                document.getElementById("title").value = "minus";
+            }
+
+        })
+    </script>
+
+
+    <script>
+        document.getElementById('invert-button').addEventListener('click', function () {
+            document.getElementById("my-qr-reader").classList.toggle("inverted");
+        });
+
+        document.getElementById('qr-form').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent form submission
+
+            fetch('/addbonusandminus', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ID: document.getElementById('id').value,
+                    title: document.getElementById('title').value,
+                    description: document.getElementById('description').value,
+                    bonus: document.getElementById('bonusamount').value
+                }),
+            })
+                .then(function (response) {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(function (data) {
+                    console.log(data);
+                    displayMessage('Form submitted successfully!');
+                    document.getElementById('qr-form').reset(); // Reset form after submission
+                })
+                .catch(function (error) {
+                    console.error('Error submitting form:', error);
+                    displayMessage('Error submitting form. Please try again.');
+                });
+
+        });
+
+        function playBeepSound() {
+            var audio = document.getElementById('beep');
+            audio.play();
+        }
+
+        function displayMessage(message) {
+            var messageDiv = document.getElementById('message');
+            messageDiv.textContent = message;
+            messageDiv.style.display = 'block';
+
+            setTimeout(function () {
+                messageDiv.style.display = 'none';
+            }, 3000); // Hide message after 3 seconds
+        }
+
+        function domReady(fn) {
+            if (document.readyState === 'complete' || document.readyState === 'interactive') {
+                setTimeout(fn, 1000);
+            } else {
+                document.addEventListener('DOMContentLoaded', fn);
+            }
+        }
+
+        domReady(function () {
+            var qrReaderElement = document.getElementById('my-qr-reader');
+
+            function onScanSuccess(decodeText, decodeResult) {
+                var sanitizedText = decodeText.replace(/\s+/g, ''); // Remove spaces
+                document.getElementById('id').value = sanitizedText; // Put scanned text into ID input
+                playBeepSound(); // Play beep sound
+                console.log(sanitizedText);
+                // Process scanned QR code data as needed
+            }
+
+            var htmlscanner = new Html5QrcodeScanner('my-qr-reader', {
+                fps: 3,
+                qrbos: 250,
+                experimentalFeatures: {
+                    useBarCodeDetectorIfSupported: true
+                }
+            });
+
+            htmlscanner.render(onScanSuccess);
+        });
+    </script>
+
+</body>
+
+</html>

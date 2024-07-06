@@ -12,7 +12,7 @@ const fs = require("fs");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
 const secretKey = "kero";
-const cors = require('cors');
+const cors = require("cors");
 
 app.use(express.static(path.join(__dirname, "/public")));
 
@@ -27,11 +27,13 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*'); // Allow requests from any origin
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.header("Access-Control-Allow-Origin", "*"); // Allow requests from any origin
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
   next();
 });
-
 
 const { Student, Meeting } = require("./model/User");
 const { register, adminAuth, userAuth } = require("./Auth/auth.js");
@@ -86,16 +88,14 @@ app.post("/submit", upload.single("avatar"), async (req, res, next) => {
   }
 });
 
-
-
 app.post("/edituser", upload.single("avatar"), async (req, res, next) => {
   const id = req.body.ID;
   const picUrl = req.body.picurl;
-  
+
   try {
     // Find the user by ID
     let user = await Student.findOne({ ID: id });
-    
+
     if (!user) {
       return res.status(404).send("User not found");
     }
@@ -111,7 +111,6 @@ app.post("/edituser", upload.single("avatar"), async (req, res, next) => {
     next(error);
   }
 });
-
 
 app.get("/attendanceReview", userAuth, async (req, res) => {
   let ID;
@@ -183,7 +182,7 @@ app.get("/attendanceReview/:ID", adminAuth, async (req, res) => {
     }).populate("meetings.meeting");
     const grapharray = [];
     await allstudents.forEach(async (student) => {
-      grapharray.push([student.name, await student.gettotalbonus()]);
+      grapharray.push([student.name, await student.totalscore]);
     });
 
     let qrsrc;
@@ -206,6 +205,7 @@ app.get("/attendanceReview/:ID", adminAuth, async (req, res) => {
     console.log(profileData.meetings);
     const profileData2 = {
       ID: profileData.ID,
+      totalscore: profileData.totalscore,
       name: profileData.name,
       grade: profileData.grade,
       meetingsAttended: profileData.meetings.length,
@@ -240,30 +240,28 @@ app.post("/qrcodepage", adminAuth, async (req, res) => {
   // console.log(name.meetings[0].meeting.toString());
   // console.log(meeting1.id);
   // console.log(arr);
-  if (name == undefined){
+  if (name == undefined) {
     res.send({ message: "not in system" });
-  }else{
-
-  
-  if ( 
-    (await name.meetings.filter(
-      (object) => object.meeting.toString() === meeting1.id
-    ).length) == 0
-  ) {
-    // use this here
-    await name.meetings.push(newdata);
-    await name
-      .save()
-      .then((saveddata) => {
-        res.send({ message: " saved", success: true });
-      })
-      .catch((err) => {
-        res.send({ message: "error saving" });
-      });
   } else {
-    res.send({ message: "saved before" });
+    if (
+      (await name.meetings.filter(
+        (object) => object.meeting.toString() === meeting1.id
+      ).length) == 0
+    ) {
+      // use this here
+      await name.meetings.push(newdata);
+      await name
+        .save()
+        .then((saveddata) => {
+          res.send({ message: " saved", success: true });
+        })
+        .catch((err) => {
+          res.send({ message: "error saving" });
+        });
+    } else {
+      res.send({ message: "saved before" });
+    }
   }
-}
 });
 
 app.get("/dashboard", adminAuth, async (req, res) => {
@@ -289,7 +287,8 @@ app.post("/putmeetings", adminAuth, async (req, res) => {
   });
 });
 
-app.route("/login")
+app
+  .route("/login")
   .get((req, res) => {
     res.sendFile(path.join(__dirname, "login.html"));
   })
@@ -302,34 +301,47 @@ app.route("/login")
       const token = jwt.sign({ ID: user.ID, role: user.role }, secretKey);
 
       // Correctly set the cookie
-      res.cookie('token', token, {
-       // httpOnly: true, // Cookie is accessible only by the web server
-        secure: process.env.NODE_ENV === 'production', // Cookie is only sent over HTTPS
-        sameSite: 'Strict', // Helps mitigate CSRF attacks
+      res.cookie("token", token, {
+        // httpOnly: true, // Cookie is accessible only by the web server
+        secure: process.env.NODE_ENV === "production", // Cookie is only sent over HTTPS
+        sameSite: "Strict", // Helps mitigate CSRF attacks
       });
-      
+
       res.json({ message: "Login successful" });
     } else {
       res.status(401).json({ error: "Invalid username or password" });
     }
   });
 
+app.get("/edit", adminAuth, (req, res) => {
+  res.sendFile(path.join(__dirname, "edit.html"));
+});
 
-
-
-
-app.get("/edit" ,adminAuth , (req,res)=>{
-  res.sendFile(path.join(__dirname,"edit.html")) ; 
-})
-
-app.get("/users" , adminAuth ,async(req,res)=>{
-
+app.get("/users", adminAuth, async (req, res) => {
   const users = await Student.find({});
-  res.json(users); 
-})
+  res.json(users);
+});
 
+app.get("/bonus", (req, res) => {
+  res.sendFile(path.join(__dirname, "bonus.html"));
+});
+app.post("/addbonusandminus", async (req, res) => {
+  const { ID, title, description, bonus } = req.body;
 
-
+  const student = await Student.findOne({ ID: ID });
+  if (student != undefined && student.meetings.length > 0) {
+    console.log(student.meetings);
+    student.meetings[student.meetings.length - 1].bonusandminus.push({
+      title: title,
+      description: description,
+      bonus: bonus,
+    });
+    console.log(student.meetings[student.meetings.length - 1]);
+    student.save().then((data) => {
+      res.json("saved");
+    });
+  }
+});
 
 app.get("/print", adminAuth, async (req, res) => {
   const users = await Student.find({}); //.populate("meetings.meeting");
@@ -352,28 +364,6 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // async function fun(username) {
 //   const response = await fetch('https://attendance-qn01.onrender.com/login', {
@@ -417,7 +407,7 @@ app.listen(PORT, () => {
 //       await new Promise(resolve => setTimeout(resolve, delayBetweenBatches));
 //     }
 //   }
-  
+
 // }
 
 // (async () => {

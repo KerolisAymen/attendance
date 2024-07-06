@@ -8,7 +8,7 @@
   <script src="https://www.gstatic.com/charts/loader.js"></script>
   <style>
     body {
-      overflow-x: hidden ;
+      overflow-x: hidden;
       font-family: Arial, sans-serif;
       background-color: #f4f4f4;
       margin: 0;
@@ -55,8 +55,10 @@
       font-size: larger;
       font-weight: bold;
       width: -webkit-fill-available;
+      list-style: none;
     }
-    #chart_div{
+
+    #chart_div {
       width: auto;
       margin: 50px;
       background-color: #fff;
@@ -79,7 +81,7 @@
     
     " alt="profilepicture">
 
-    
+
     <div class="textcontainer">
       <p><strong>الاسم:</strong>
         <%= profileData2.name %>
@@ -99,75 +101,93 @@
     <img src="<%= profileData2.imgUrl %>" alt="qrcodepicture">
   </div>
 
-  <div id="chart_div" ></div>
+  <div id="chart_div"></div>
 
   <% profileData2.meetings.forEach(function(item) { %>
 
-    <div class="container">
-      <h2>
-        <%= item.meeting.name + "--" + item.meeting.date.toISOString().replace("T00:00:00.000Z", "") %>
+  <div class="container">
+    <h2>
+      <%= item.meeting.name + "--" + item.meeting.date.toISOString().replace("T00:00:00.000Z", "") %>
 
-        
-      </h2>
-      <% if (item.meeting.name==="تسبحة" ) { %>
-        <li>+50bonus</li>
-        <% } else { %>
-          <li>+30bonus</li>
-          <% } %>
+
+    </h2>
+    <% if (item.meeting.name==="تسبحة" ) { %>
+    <li>+50bonus</li>
+    <% } else { %>
+    <li>+30bonus</li>
+    <% } %>
+
+
+
+    <div>
+      <ul>
+
+        <% item.bonusandminus.forEach(b=>{ %>
+
+        <li>
+          <%=b.title%>
+          <%=b.decription%>
+          <%=b.bonus%>
+        </li>
+
+        <%})%>
+      </ul>
     </div>
-    <% }); %>
+  </div>
+  <% }); %>
 
-      <div class="container">
-        <div>اجمالى بونص حضور التسبحة</div>
-        <li>
-          <%= (profileData2.meetings.filter(meeting=> meeting.meeting.name === "تسبحة").length * 50) %>
-        </li>
-        <div>اجمالى بونص حضور الاجتماعات</div>
-        <li>
-          <%= (profileData2.meetings.filter(meeting=> meeting.meeting.name === "اجتماع").length * 30) %>
-        </li>
-      </div>
+  <div class="container">
+    <div>اجمالى البونص حضور التسبحة</div>
+    <li>
+      <%= profileData2.totalscore %>
+    </li>
+  
 
 
 
 
 
-      <script>
-        // Load the Visualization API and the corechart package
-        google.charts.load('current', { 'packages': ['corechart'] });
-    
-        // Set a callback to run when the Google Visualization API is loaded
-        google.charts.setOnLoadCallback(drawChart);
-    
-        function drawChart() {
-            // Define the data for the chart
-            var data = google.visualization.arrayToDataTable([
-                ['name', 'points'],
-                <% profileData2.graph.forEach(function(item) { %>
-                    ['<%=item[0]%>', <%= item[1]%>],
-                <% }); %>
-            ]);
-    
-            // Define chart options
-            var options = {
-                title: 'احصائيات سنه <%= profileData2.grade %>',
-                legend: { position: 'none' },
-                chartArea: { width: '50%' },
-                hAxis: {
-                    title: 'points',
-                    minValue: 0
-                },
-                vAxis: {
-                    title: 'الاسماء'
-                }
-            };
-    
-            // Create a new BarChart instance and draw the chart
-            var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
-            chart.draw(data, options);
+  <script>
+    // Load the Visualization API and the corechart package
+    google.charts.load('current', {
+      'packages': ['corechart']
+    });
+
+    // Set a callback to run when the Google Visualization API is loaded
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+      // Define the data for the chart
+      var data = google.visualization.arrayToDataTable([
+        ['name', 'points'],
+        <% profileData2.graph.forEach(function(item) { %>['<%=item[0]%>', <%= item[1]%>],
+        <% }); %>
+      ]);
+
+      // Define chart options
+      var options = {
+        title: 'احصائيات سنه <%= profileData2.grade %>',
+        legend: {
+          position: 'none'
+        },
+        chartArea: {
+          width: '50%'
+        },
+        hAxis: {
+          title: 'points',
+          minValue: 0
+        },
+        vAxis: {
+          title: 'الاسماء'
         }
-    </script>
-    
+      };
+
+      // Create a new BarChart instance and draw the chart
+      var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+      chart.draw(data, options);
+    }
+  </script>
+
 </body>
 
 </html>
