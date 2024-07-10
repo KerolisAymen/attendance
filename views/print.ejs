@@ -11,7 +11,7 @@
 
 
 
-    <%if (user.profilepic != undefined && user.role != "admin") { %>
+    <%if (user.profilepic != undefined && user.role != "admin" && user.meetings.length==0) { %>
     <div class="usercard">
 
       <div class="img-qr">
@@ -25,7 +25,7 @@
 
 
 
-      <div style="padding: 0.3cm;
+      <div style="padding: 0.1cm;
       display: flex;
       flex-direction: row-reverse;
       justify-content: space-between;">
@@ -59,7 +59,7 @@
   </div>
   <style>
     img {
-      height: 4.3cm;
+      height: 4.2cm;
     }
 
     .container {
@@ -86,9 +86,9 @@
       height:5.5cm;
       overflow: hidden;
       /* border: dashed 0.001cm black; */
-      padding: 0.5cm;
-
-
+      padding: 0.35cm;
+      /* padding-bottom: 0cm; */
+      box-sizing: border-box;
     }
 
     h3 ,h2 {
