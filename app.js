@@ -49,7 +49,7 @@ app.get("/", adminAuth, async (req, res) => {
     //  console.log(decodedToken);
 
     const user = await Student.findOne({ ID: decodedToken.ID });
-    // console.log(user);
+    console.log(user);
     res.render("home", { user });
   });
 });
@@ -112,6 +112,7 @@ app.post("/edituser", upload.single("avatar"), async (req, res, next) => {
   }
 });
 
+
 app.get("/attendanceReview", userAuth, async (req, res) => {
   let ID;
   const token = req.cookies.token;
@@ -123,13 +124,15 @@ app.get("/attendanceReview", userAuth, async (req, res) => {
     "meetings.meeting"
   );
 
+  console.log(profileData.name); 
+  
   if (profileData != undefined) {
     const allstudents = await Student.find({
       grade: profileData.grade,
     }).populate("meetings.meeting");
     const grapharray = [];
     await allstudents.forEach(async (student) => {
-      grapharray.push([student.name, await student.gettotalbonus()]);
+      grapharray.push([student.name, await student.totalscore]);
     });
 
     let qrsrc;
@@ -152,6 +155,7 @@ app.get("/attendanceReview", userAuth, async (req, res) => {
     console.log(profileData.meetings);
     const profileData2 = {
       ID: profileData.ID,
+      totalscore: profileData.totalscore,
       name: profileData.name,
       grade: profileData.grade,
       meetingsAttended: profileData.meetings.length,
@@ -168,7 +172,6 @@ app.get("/attendanceReview", userAuth, async (req, res) => {
     res.send("<h1>this user not found</h1>");
   }
 });
-
 app.get("/attendanceReview/:ID", adminAuth, async (req, res) => {
   let ID = req.params.ID;
   console.log(ID);
