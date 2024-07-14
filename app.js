@@ -39,17 +39,12 @@ const { Student, Meeting } = require("./model/User");
 const { register, adminAuth, userAuth } = require("./Auth/auth.js");
 const { decode } = require("punycode");
 
-//  (async()=>{
-//   const temp = await Student.find({});
-//   console.log(temp[5]);
-// }) ()
 
 app.get("/", adminAuth, async (req, res) => {
   jwt.verify(req.cookies.token, "kero", async (err, decodedToken) => {
-    //  console.log(decodedToken);
 
     const user = await Student.findOne({ ID: decodedToken.ID });
-    console.log(user);
+    console.log(user.name+" visited home page");
     res.render("home", { user });
   });
 });
@@ -120,11 +115,26 @@ app.get("/attendanceReview", userAuth, async (req, res) => {
   jwt.verify(token, "kero", (err, decodedToken) => {
     ID = decodedToken.ID;
   });
+
+  attendanceReview(ID,res);
+
+});
+app.get("/attendanceReview/:ID", adminAuth, async (req, res) => {
+  let ID = req.params.ID;
+ attendanceReview(ID,res) ; 
+});
+
+
+
+async function  attendanceReview(ID,res){
+
+
+  
   const profileData = await Student.findOne({ ID: ID }).populate(
     "meetings.meeting"
   );
 
-  console.log(profileData.name); 
+ console.log(profileData.name +" profile visited"); 
   
   if (profileData != undefined) {
     const allstudents = await Student.find({
@@ -145,14 +155,14 @@ app.get("/attendanceReview", userAuth, async (req, res) => {
     await axios
       .get(apiUrl, { params })
       .then((response) => {
-        console.log("QR code URL:", response.request.res.responseUrl);
+        // console.log("QR code URL:", response.request.res.responseUrl);
         qrsrc = response.request.res.responseUrl;
       })
       .catch((error) => {
         console.error("Error:", error.message);
       });
 
-    console.log(profileData.meetings);
+   // console.log(profileData.meetings);
     const profileData2 = {
       ID: profileData.ID,
       totalscore: profileData.totalscore,
@@ -166,65 +176,13 @@ app.get("/attendanceReview", userAuth, async (req, res) => {
     };
 
     JSON.stringify(profileData2);
-    console.log(profileData2);
+   // console.log(profileData2);
     res.render("profile", { profileData2 });
   } else {
     res.send("<h1>this user not found</h1>");
   }
-});
-app.get("/attendanceReview/:ID", adminAuth, async (req, res) => {
-  let ID = req.params.ID;
-  console.log(ID);
-  const profileData = await Student.findOne({ ID: ID }).populate(
-    "meetings.meeting"
-  );
 
-  if (profileData != undefined) {
-    const allstudents = await Student.find({
-      grade: profileData.grade,
-    }).populate("meetings.meeting");
-    const grapharray = [];
-    await allstudents.forEach(async (student) => {
-      grapharray.push([student.name, await student.totalscore]);
-    });
-
-    let qrsrc;
-    const apiUrl = "https://api.qrserver.com/v1/create-qr-code/";
-    const params = {
-      size: "300x300",
-      data: ID,
-    };
-
-    await axios
-      .get(apiUrl, { params })
-      .then((response) => {
-        console.log("QR code URL:", response.request.res.responseUrl);
-        qrsrc = response.request.res.responseUrl;
-      })
-      .catch((error) => {
-        console.error("Error:", error.message);
-      });
-
-    console.log(profileData.meetings);
-    const profileData2 = {
-      ID: profileData.ID,
-      totalscore: profileData.totalscore,
-      name: profileData.name,
-      grade: profileData.grade,
-      meetingsAttended: profileData.meetings.length,
-      meetings: profileData.meetings,
-      profilepic: profileData.profilepic,
-      imgUrl: qrsrc,
-      graph: grapharray,
-    };
-
-    JSON.stringify(profileData2);
-    console.log(profileData2);
-    res.render("profile", { profileData2 });
-  } else {
-    res.send("<h1>this user not found</h1>");
-  }
-});
+}
 
 app.route("/qrpage").get(adminAuth, (req, res) => {
   res.sendFile(path.join(__dirname, "qrpage.html"));
@@ -298,7 +256,7 @@ app
   .post(async (req, res) => {
     const username = req.body.username;
     const user = await Student.findOne({ ID: username });
-    console.log(user);
+    //console.log(user);
     if (user) {
       // Generate token
       const token = jwt.sign({ ID: user.ID, role: user.role }, secretKey);
@@ -367,58 +325,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-
-// async function fun(username) {
-//   const response = await fetch('https://attendance-qn01.onrender.com/login', {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json'
-//     },
-//     body: JSON.stringify({ username })
-//   });
-
-//   const data = await response.json();
-//   if (response.ok) {
-//     const token = data.token;
-//     // localStorage.setItem('token', token);
-//     console.log("done")
-//   } else {
-//     console.log(data.error);
-//     // console.log("error")
-//   }
-// }
-
-// async function testInBatches(start, batchSize, totalRequests, delayBetweenBatches, delayBetweenRequests) {
-//   for (let i = start; i < totalRequests; i += batchSize) {
-//     const end = Math.min(i + batchSize, totalRequests);
-//     const batchResults = await Promise.all(Array.from({ length: end - i }, (_, index) => {
-//       const username = (i + index).toString();
-//       console.log(i);
-//       return fun(username);
-
-//     }));
-
-//     batchResults.forEach((result, index) => {
-//       const username = (i + index).toString();
-//       if (result === "done") {
-//         console.log(`${username} worked`);
-//       }
-//     });
-
-//     if (i + batchSize < totalRequests) {
-//       console.log(`Waiting ${delayBetweenBatches} ms before the next batch...`);
-//       await new Promise(resolve => setTimeout(resolve, delayBetweenBatches));
-//     }
-//   }
-
-// }
-
-// (async () => {
-//   const start = 29030;
-//   const batchSize = 200; // Number of requests in each batch
-//   const totalRequests = 100000;
-//   const delayBetweenBatches = 500; // milliseconds (adjust as needed)
-//   const delayBetweenRequests = 10; // milliseconds (adjust as needed)
-
-//   await testInBatches(start, batchSize, totalRequests, delayBetweenBatches, delayBetweenRequests);
-// })();
