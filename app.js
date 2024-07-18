@@ -304,6 +304,11 @@ app.post("/addbonusandminus", async (req, res) => {
   }
 });
 
+// app.get("bonusHistory" , async(req,res)=>{
+//   var students = await Student.find({}).populate("meeting");
+  
+   
+// })
 app.get("/print", adminAuth, async (req, res) => {
   const users = await Student.find({}); //.populate("meetings.meeting");
 

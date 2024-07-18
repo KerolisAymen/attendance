@@ -21,7 +21,8 @@ const meetingSchema = new mongoose.Schema({
         meeting: { type: mongoose.Schema.Types.ObjectId, ref: "Meeting" },
         bonusandminus: [{
           _id: false , 
-          title:String , description:String  , bonus:Number 
+          title:String , description:String  , bonus:Number ,
+          date : {type :Date ,default:Date.now()} 
         }], // Array of strings for bonus and minus data
       },
     ],
